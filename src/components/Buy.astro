@@ -1,0 +1,31 @@
+---
+import Section from './Section.astro';
+import { buyOptions } from '../data/buy';
+---
+<Section id="buy" title="Ипотека от 6%<br>или рассрочка без переплаты">
+  <div class="buy">
+    {buyOptions.map((o) => (
+      <div class:list={['buy-c', { acc: o.accent }]}>
+        {o.big && <b class="big">{o.big}</b>}
+        <h3>{o.title}</h3>
+        <p>{o.text}</p>
+        {o.accent && <a class="btn" href="#flats">Выбрать квартиру</a>}
+      </div>
+    ))}
+  </div>
+</Section>
+<style>
+  .buy { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .buy-c { background: var(--card); border-radius: var(--r); border: 1px solid var(--line); padding: 24px; display: flex; flex-direction: column; gap: 8px; min-height: 200px; }
+  .buy-c b.big { font-size: 44px; font-weight: 800; letter-spacing: -.05em; line-height: 1; margin-bottom: 8px; }
+  .buy-c p { color: var(--ink-2); font-size: 15px; }
+  .buy-c.acc { background: var(--copper-strong); color: #fff; border-color: transparent; }
+  .buy-c.acc p { color: #fff; }
+  .buy-c.acc .btn { margin-top: auto; background: #fff; color: var(--ink); align-self: flex-start; }
+  @media (max-width: 980px) {
+    .buy { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .buy { grid-template-columns: 1fr; }
+  }
+</style>

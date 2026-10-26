@@ -96,3 +96,10 @@ test('сроки', async ({ page }) => {
   await expect(s.locator('.house .when')).toHaveText(['IV кв. 2026', 'II кв. 2027', 'IV кв. 2027']);
   await expect(s.getByRole('progressbar', { name: 'Готовность корпуса 1' })).toHaveAttribute('aria-valuenow', '95');
 });
+
+test('как купить', async ({ page }) => {
+  const s = page.locator('#buy');
+  expect(await textOf(s.locator('h2'))).toBe(copy.buy.h2);
+  await expect(s.locator('.buy-c h3')).toHaveText(['Семейная ипотека', 'IT-ипотека', 'Рассрочка до сдачи дома', 'Рыночная ипотека', 'Trade-in', 'Бронь онлайн']);
+  await expect(s.getByRole('link', { name: 'Выбрать квартиру' })).toHaveAttribute('href', '#flats');
+});
