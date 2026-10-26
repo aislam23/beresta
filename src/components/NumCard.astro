@@ -1,0 +1,15 @@
+---
+import type { Num } from '../data/complex';
+interface Props { num: Num; class?: string }
+const { num, class: cls } = Astro.props;
+---
+<div class:list={['num', `tone-${num.tone}`, cls]}>
+  <b>{num.value}{num.unit && <small>{num.unit}</small>}</b>{num.label}
+</div>
+<style>
+  .num { background: var(--card); border-radius: 18px; padding: 18px 20px; font-size: 14px; line-height: 1.35; color: var(--ink-2); border: 1px solid var(--line); }
+  .num b { display: block; font-size: clamp(28px, 3vw, 40px); font-weight: 800; letter-spacing: -.045em; line-height: 1; margin-bottom: 6px; color: var(--ink); }
+  .num b small { font-size: .48em; letter-spacing: 0; margin-left: 2px; }
+  .tone-pine { background: var(--pine); color: #D7E0D2; border-color: transparent; } .tone-pine b { color: var(--paper); }
+  .tone-copper { background: var(--copper-strong); color: #fff; border-color: transparent; } .tone-copper b { color: #fff; }
+</style>

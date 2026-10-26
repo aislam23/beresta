@@ -40,5 +40,6 @@ describe('submitLead', () => {
     if (!r.ok) throw new Error('fixture');
     await expect(submitLead(r.lead, 0)).resolves.toEqual({ ok: true });
     expect(info).toHaveBeenCalledOnce();
+    info.mockRestore();
   });
 });

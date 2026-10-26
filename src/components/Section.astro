@@ -1,0 +1,26 @@
+---
+interface Props {
+  id: string;
+  /** Может содержать <br> и &nbsp; — строка из кода, не от пользователя. */
+  title: string;
+  lead?: string;
+  tone?: 'paper' | 'paper-2';
+  flushTop?: boolean;
+}
+const { id, title, lead, tone = 'paper', flushTop = false } = Astro.props;
+---
+<section id={id} class:list={['section', `tone-${tone}`, { 'flush-top': flushTop }]} aria-labelledby={`${id}-title`}>
+  <div class="wrap">
+    <div class="head">
+      <h2 id={`${id}-title`} set:html={title} />
+      {lead && <p class="lead" set:html={lead} />}
+    </div>
+    <slot />
+  </div>
+</section>
+<style>
+  .section { padding: clamp(64px, 9vw, 120px) 0; scroll-margin-top: var(--hdr-h); }
+  .tone-paper-2 { background: var(--paper-2); }
+  .flush-top { padding-top: 0; }
+  .head { margin-bottom: clamp(32px, 4vw, 56px); }
+</style>

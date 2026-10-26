@@ -31,7 +31,10 @@ describe('данные', () => {
     expect(nav.map((n) => n.href)).toEqual(['#area', '#yard', '#flats', '#buy', '#dev']);
   });
   it('в данных нет длинного тире', () => {
-    const all = JSON.stringify({ complex, heroNums, flats, houses, distances, audiences, faq, buyOptions, developerNums });
-    expect(all).not.toContain('—');
+    const modules = import.meta.glob('../../src/data/*.ts', { eager: true });
+    expect(Object.keys(modules).length).toBeGreaterThan(0);
+    for (const [path, mod] of Object.entries(modules)) {
+      expect(JSON.stringify(mod), path).not.toContain('—');
+    }
   });
 });
