@@ -24,13 +24,19 @@
 6. **Неразрывные пробелы:** `&nbsp;` между числом и единицей там, где они стоят в тексте (`15&nbsp;минутах`, `6,6&nbsp;млн&nbsp;₽`), и в `лес за&nbsp;окном`. В данных из `src/data/*` используй символ ` `.
 7. **Ссылки** внутри страницы только якорные (`#area`). Файлы из `public/` подключаются через `withBase()` из `src/lib/url.ts`.
 8. Команды выполняются из корня репозитория `/Users/macbook/Desktop/beresta`. Ветка `feat/landing`.
-9. Перед коммитом каждой задачи прогоняй `npm run check && npm run test`, а с задачи 5 ещё `npm run test:e2e`. Всё должно быть зелёным.
+9. Перед коммитом каждой задачи прогоняй `npm run check && npm run test`, а с задачи 5 ещё `npm run test:e2e`. Всё должно быть зелёным. Перед `test:e2e` останови `npm run dev`, если он запущен: Playwright переиспользует сервер на порту 4321 и проверит не ту сборку.
 10. Коммиты на русском, в конце строка `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+11. **Специфичность scoped-стилей.** Astro добавляет к селекторам атрибут (`.photo[data-astro-cid-…]`, специфичность 0,2,0). Поэтому, когда родитель переопределяет стиль дочернего компонента, селектор пишется **с классом родителя**: `.hero :global(.hero-photo)`, а не просто `:global(.hero-photo)`. Иначе правило молча проиграет.
+12. **`hidden`.** В `tokens.css` есть `[hidden] { display: none !important; }`. Не задавай `display: none` элементам, которые показываются через `hidden = false`.
 
 ### Порядок и параллельность
 
 - Задачи 1–20 (код) идут последовательно, одна за другой.
-- Задачи 21–23 (картинки) выполняет **координатор, а не субагент**, потому что в них есть контрольные точки с Артёмом. Они идут **параллельно** с задачами 6–20: трогают только `docs/images/`, `scripts/`, `src/assets/photos/`, `public/og.jpg`. Задача 21 нужна до 22, задача 22 нужна до 23. Задача 23 должна закончиться до задачи 25.
+- Задачи 21–23 (картинки) выполняет **координатор, а не субагент**, потому что в них есть контрольные точки с Артёмом. Они идут **параллельно** с задачами 6–20, но **в отдельном worktree**, чтобы коммиты не смешивались и не ловили `index.lock`:
+  ```bash
+  git worktree add ../beresta-images -b feat/images feat/landing   # после задачи 6
+  ```
+  В worktree трогаются только `docs/images/`, `scripts/`, `src/assets/photos/*.png`, `public/og.jpg`. Перед задачей 24 координатор мержит: `git -C /Users/macbook/Desktop/beresta merge --no-ff feat/images` (в паузе между задачами субагентов), затем `git worktree remove ../beresta-images`. Точки кадрирования (`focus` в `src/assets/photos/index.ts`) настраиваются уже после мержа, в задаче 25. Задача 21 нужна до 22, задача 22 нужна до 23.
 - Задачи 24–25 идут в конце.
 
 ### Карта файлов
@@ -786,7 +792,16 @@ export const copy = {
   houses: { h2: 'Первый дом сдаём в этом квартале', lead: 'Корпус 1 готов на 95%. В корпусе 3 только начались продажи.' },
   buy: { h2: 'Ипотека от 6% или рассрочка без переплаты' },
   dev: { h2: 'СК «Высота-16» строит в Казани с 2011 года', escrow: 'До сдачи дома деньги лежат в банке' },
-  faq: { h2: 'О чём спрашивают перед покупкой', first: 'А если дом не сдадут вовремя?' },
+  faq: {
+    h2: 'О чём спрашивают перед покупкой',
+    items: [
+      ['А если дом не сдадут вовремя?', 'У застройщика 14 сданных домов, и ни один срок не переносили больше чем на квартал. Корпус 1 готов на 95%. Деньги до сдачи лежат на эскроу-счёте в банке, и застройщик не может их потратить.'],
+      ['Это же далеко от центра?', '15 минут на машине и 25 минут на общественном транспорте. До метро 9 минут пешком.'],
+      ['Окраина, наверное, ничего рядом нет?', 'Школа на 1 100 мест в пяти минутах пешком, два детских сада, поликлиника и ТЦ «Сосны» уже работают. На первых этажах будут кофейня, пекарня, пункт выдачи и детский сад.'],
+      ['Дорого.', 'Есть семейная и IT-ипотека от 6%, рассрочка 0% до сдачи дома при взносе от 30% и trade-in, если у вас уже есть квартира. Самые низкие цены сейчас в корпусе 3.'],
+      ['Будет шумно и много машин?', 'Двор закрыт для машин, паркинг на 320 мест под землёй.'],
+    ],
+  },
   pick: {
     h2: 'Подберём 3–5 квартир под ваш бюджет',
     lead: 'Оставьте телефон. Менеджер позвонит и пришлёт подборку с расчётом ежемесячного платежа.',
@@ -864,6 +879,7 @@ h3 { font-size: 20px; letter-spacing: -.02em; line-height: 1.2; }
 p { margin: 0; }
 a { color: inherit; }
 img { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
 :focus-visible { outline: 3px solid var(--copper-strong); outline-offset: 3px; border-radius: 4px; }
 ```
 
@@ -896,7 +912,7 @@ export function withBase(path: string): string {
 }
 ```
 
-`src/components/Logo.astro` (CSS из строки 56 прототипа, селекторы `.logo`, `.logo i`):
+`src/components/Logo.astro` (CSS из строк 54–55 прототипа, селекторы `.logo`, `.logo i`):
 ```astro
 ---
 interface Props { href?: string }
@@ -1115,7 +1131,7 @@ const img = getShot(shot);
   .photo { position: relative; overflow: hidden; border-radius: var(--r); min-height: 260px; }
   .photo :global(picture), .photo :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: var(--focus); }
   .ph { position: absolute; inset: 0; }
-  /* фоны заглушек: строки 44 и 48–50 прототипа */
+  /* фоны заглушек: строки 44 и 47–49 прототипа */
   .tone-mist .ph { background: linear-gradient(180deg, #E3DDCF 0%, #CFD3C3 50%, #8E9F88 78%, #5F7461 100%); }
   .tone-warm .ph { background: linear-gradient(180deg, #F1E6D2 0%, #E4D5BC 55%, #B79D7C 100%); }
   .tone-green .ph { background: linear-gradient(180deg, #DCE3D3 0%, #B9C6AE 55%, #6F8468 100%); }
@@ -1284,7 +1300,7 @@ import { heroNums } from '../data/complex';
 </section>
 ```
 
-CSS: строки 62–78 прототипа (`.hero`, `.hero-ph` → `:global(.hero-photo)`, `.fog`, `.hero .wrap`, `.hero-card`, `.hero h1` с `margin: 0`, `.hero h1 span`, `.hero .lead`, `.hero .cta`, `.hero .note`, `.nums`). **Не переносить `.tag`.** `.hero-photo` получает `position: absolute; inset: 0; border-radius: 0; min-height: 0;` через `:global(.hero-photo)`, и фон-туман из строки 64 (`.hero-ph{...}`) как `:global(.hero-photo.tone-mist .ph)`. Медиа: `.nums` 2 колонки при 980px (строка 229); при 640px строки 237–239 (`.hero`, `:global(.hero-photo) { bottom: auto; height: 420px }`, `.hero-card`).
+CSS: строки 62–78 прототипа (`.hero`, `.hero-ph` → `:global(.hero-photo)`, `.fog`, `.hero .wrap`, `.hero-card`, `.hero h1` с `margin: 0`, `.hero h1 span`, `.hero .lead`, `.hero .cta`, `.hero .note`, `.nums`). **Не переносить `.tag`.** Фото получает `position: absolute; inset: 0; border-radius: 0; min-height: 0;` через `.hero :global(.hero-photo)`, а фон-туман из строки 64 (`.hero-ph{...}`) через `.hero :global(.hero-photo .ph)`. У `.hero` добавь `overflow: hidden`: туман `.fog` выходит за края на 10% и иначе даст горизонтальный скролл. Медиа: `.nums` 2 колонки при 980px (строка 229); при 640px строки 237–239 (`.hero`, `.hero :global(.hero-photo) { bottom: auto; height: 420px }`, `.hero-card`).
 
 - [ ] **Step 3: index.astro** — добавить `<Hero />` первым в `<main>`.
 
@@ -1375,12 +1391,11 @@ test('двор', async ({ page }) => {
   expect(await textOf(s.locator('h2'))).toBe(copy.yard.h2);
   expect(await textOf(s.locator('.lead'))).toBe(copy.yard.lead);
   await expect(s.locator('.feat h3')).toHaveText(['Подземный паркинг на 320 мест', 'Площадки для всех возрастов', 'Лобби с консьержем', 'Кладовки от 4 м²']);
+  // toHaveText нормализует пробелы через \s+, а \s включает NBSP, поэтому «4 м²» совпадает с «4\u00a0м²»
   await expect(s.locator('.feat svg[aria-hidden="true"]')).toHaveCount(4);
   await expect(s.locator('.shop')).toHaveCount(4);
 });
 ```
-
-Тест `toHaveText` сравнивает с NBSP как с пробелом? Нет. Для `Кладовки от 4 м²` используй `norm`: замени последнюю проверку h3 на `expect((await s.locator('.feat h3').allInnerTexts()).map(norm)).toEqual([...])` и импортируй `norm` из `./helpers`.
 
 - [ ] **Step 2: YardIcon.astro**
 
@@ -1414,7 +1429,7 @@ import { yardFeatures, groundFloor } from '../data/yard';
 </Section>
 ```
 
-CSS: строки 96–107 прототипа, `.yard .ph` → `:global(.yard-photo) { grid-column: span 7; min-height: 460px }`, у списков `list-style: none; margin: 0; padding: 0`. Медиа: строки 229 (`.yard-strip` 2 колонки), 231 (`:global(.yard-photo), .yard-list { grid-column: 1/-1 }`), 242.
+CSS: строки 96–107 прототипа, `.yard .ph` → `.yard :global(.yard-photo) { grid-column: span 7; min-height: 460px }`, у списков `list-style: none; margin: 0; padding: 0`. Медиа: строки 229 (`.yard-strip` 2 колонки), 231 (`.yard :global(.yard-photo), .yard-list { grid-column: 1/-1 }`), 242.
 
 - [ ] **Step 4: index.astro** — `<Yard />` после первого `<BarkDivider />`.
 
@@ -1471,7 +1486,7 @@ import { audiences } from '../data/audiences';
 </Section>
 ```
 
-CSS: строки 108–116, `.who-c .ph` → `:global(.who-photo) { border-radius: 0; min-height: 200px }`. Медиа: 2 колонки при 980px (строка 229), 1 колонка при 640px (строка 241).
+CSS: строки 108–116, `.who-c .ph` → `.who-c :global(.who-photo) { border-radius: 0; min-height: 200px }`. Медиа: 2 колонки при 980px (строка 229), 1 колонка при 640px (строка 241).
 
 - [ ] **Step 3: index.astro** — `<Audiences />` после `<Yard />`.
 
@@ -1541,7 +1556,7 @@ test('квартиры', async ({ page }) => {
   const s = page.locator('#flats');
   expect(await textOf(s.locator('h2'))).toBe(copy.flats.h2);
   expect(await textOf(s.locator('.head .lead'))).toBe(copy.flats.lead);
-  await expect(s.locator('.flat h3')).toHaveText(copy.flats.cards);
+  await expect(s.locator('.flat h3, .flat-help h3')).toHaveText(copy.flats.cards);
   await expect(s.locator('.flat svg[role="img"]')).toHaveCount(5);
   await expect(s.locator('button[data-book]')).toHaveCount(5);
   await expect(s.locator('button[data-book][data-flat="penthouse"]')).toHaveAttribute('data-book', 'Пентхаус · от 33 млн ₽');
@@ -1570,7 +1585,7 @@ const { flat } = Astro.props;
 </article>
 ```
 
-CSS: строки 119–131 и 133 прототипа (`.flat`, `.plan` с `padding: 12px` вместо текста-заглушки, `.top`, `.area-m`, `.price`, `.fx`, `.acts`, `.pent*`). **Не переносить `.pill` (строка 132).**
+CSS: строки 119–130 прототипа (`.flat`, `.plan` с `padding: 12px` вместо текста-заглушки, `.top`, `.area-m`, `.price`, `.fx`, `.acts`, `.pent*`). **Не переносить `.pill` (строка 131).**
 
 - [ ] **Step 3: Flats.astro**
 
@@ -1595,9 +1610,7 @@ import { flats, flatsNotes } from '../data/flats';
 </Section>
 ```
 
-`h3` у `.flat-help` тоже матчится тестом `.flat h3`? Нет: класс другой. Поэтому в тесте замени локатор на `s.locator('.flat h3, .flat-help h3')`.
-
-CSS: строка 118 (`.flats`), строки 134–136 (`.flats-note`, `.box`, `.box.c`). Инлайн-стили карточки «Не знаете, что выбрать?» из строки 485 прототипа оформи классом `.flat-help` (те же свойства, что у `.flat`, плюс `justify-content: center; background: var(--pine); color: var(--paper); border-color: transparent`, `h3 { font-size: 26px }`, `p { color: #C9D4C4 }`, кнопка `align-self: flex-start`). Медиа: `.flats` 2 колонки при 980px, 1 колонка при 640px; `.flats-note` 1 колонка при 640px.
+CSS: строка 118 (`.flats`), строки 132–135 (`.flats-note`, `.box`, `.box b`, `.box.c`). Инлайн-стили карточки «Не знаете, что выбрать?» из строки 485 прототипа оформи классом `.flat-help` (те же свойства, что у `.flat`, плюс `justify-content: center; background: var(--pine); color: var(--paper); border-color: transparent`, `h3 { font-size: 26px }`, `p { color: #C9D4C4 }`, кнопка `align-self: flex-start`). Медиа: `.flats` 2 колонки при 980px, 1 колонка при 640px; `.flats-note` 1 колонка при 640px.
 
 - [ ] **Step 4: index.astro** — `<Flats />` после `<Audiences />`.
 
@@ -1704,7 +1717,7 @@ test('застройщик', async ({ page }) => {
 
 - [ ] **Step 2: Developer.astro**
 
-Section `id="dev" title="СК «Высота-16»<br>строит в Казани с 2011&nbsp;года" flushTop`. Слева `.dev-nums` из `developerNums` через `<NumCard class="dev-num" />` (крупный паддинг `:global(.dev-num) { padding: 24px }`). Справа `.escrow` из `escrow`: `h3`, `p`, шаги как `<ol class="flow">` из трёх `<li>`, стрелки между ними рисуются CSS (`li + li::before { content: '→' }`, цвет `var(--copper)`) вместо `<span>` прототипа: так у шагов нет лишнего текста для скринридера. CSS: строки 163–174 с поправкой под `ol`. Медиа: `.dev` 1 колонка при 980px; `.dev-nums` 1 колонка при 640px; `.flow` 1 колонка при 640px, стрелки повернуть (`transform: rotate(90deg)`).
+Section `id="dev" title="СК «Высота-16»<br>строит в Казани с 2011&nbsp;года" flushTop`. Слева `.dev-nums` из `developerNums` через `<NumCard class="dev-num" />` (крупный паддинг `.dev-nums :global(.dev-num) { padding: 24px }`). Справа `.escrow` из `escrow`: `h3`, `p`, шаги как `<ol class="flow">` из трёх `<li>`, стрелки между ними рисуются CSS (`li + li::before { content: '→' }`, цвет `var(--copper)`) вместо `<span>` прототипа: так у шагов нет лишнего текста для скринридера. CSS: строки 163–174 с поправкой под `ol`. Медиа: `.dev` 1 колонка при 980px; `.dev-nums` 1 колонка при 640px; `.flow` 1 колонка при 640px, стрелки повернуть (`transform: rotate(90deg)`).
 
 - [ ] **Step 3: index.astro** — `<Developer />` после `<Buy />`.
 
@@ -1733,6 +1746,10 @@ test('частые вопросы', async ({ page }) => {
   const s = page.locator('#faq');
   expect(await textOf(s.locator('h2'))).toBe(copy.faq.h2);
   await expect(s.locator('details')).toHaveCount(5);
+  await expect(s.locator('summary')).toHaveText(copy.faq.items.map(([q]) => q));
+  for (const d of await s.locator('details').all()) await d.evaluate((el) => ((el as HTMLDetailsElement).open = true));
+  await expect(s.locator('details p')).toHaveText(copy.faq.items.map(([, a]) => a));
+  await page.reload();
   await expect(s.locator('details').first()).toHaveAttribute('open', '');
   const second = s.locator('details').nth(1);
   await second.locator('summary').click();
@@ -1895,8 +1912,8 @@ export function resetLeadForm(form: HTMLFormElement) {
 Разметка по строкам 600–634 прототипа со следующими изменениями:
 - обёртка `<section id="pick" class="pick" aria-labelledby="pick-title">` с `.wrap` и `.final` внутри; внутренний столбец с формой получает `data-lead-box`;
 - `h2`: `Подберём <span class="nowrap">3–5 квартир</span><br>под ваш бюджет` (`.nowrap { white-space: nowrap }`);
-- `<form data-kind="pick" novalidate>`;
-- каждое поле: `<label for="pick-name">Имя</label><input id="pick-name" name="name" aria-required="true" aria-describedby="pick-name-err" placeholder="Как к вам обращаться" autocomplete="given-name"><p class="err" id="pick-name-err" data-error-for="name" hidden></p>`; то же для `phone` (`type="tel"`, `inputmode="tel"`, `autocomplete="tel"`, `placeholder="+7 900 000-00-00"`);
+- `<form class="lead-form" data-kind="pick" novalidate>`;
+- каждое поле: `<div class="field"><label for="pick-name">Имя</label><input id="pick-name" name="name" aria-required="true" aria-describedby="pick-name-err" placeholder="Как к вам обращаться" autocomplete="given-name"><p class="err" id="pick-name-err" data-error-for="name" hidden></p></div>`; то же для `phone` (`type="tel"`, `inputmode="tel"`, `autocomplete="tel"`, `placeholder="+7 900 000-00-00"`);
 - селекты `name="budget"` (`id="pick-budget"`, label «Бюджет») и `name="purchase"` (`id="pick-purchase"`, label «Как планируете покупать») с опциями из `budgetOptions` / `purchaseOptions` (`src/data/pickOptions.ts`);
 - чекбокс `<input type="checkbox" id="pick-consent" name="consent" aria-required="true" aria-describedby="pick-consent-err">` с label «Согласен на обработку персональных данных» и `<p class="err" ... data-error-for="consent" hidden>`;
 - блок успеха `<div class="ok" data-lead-success hidden><h3 tabindex="-1" data-lead-success-title>Заявка принята</h3><p>Менеджер позвонит по номеру, который вы оставили.</p><p class="demo">Это учебный сайт, поэтому заявка никуда не отправлена.</p></div>`;
@@ -1910,7 +1927,31 @@ export function resetLeadForm(form: HTMLFormElement) {
 </script>
 ```
 
-CSS: строки 184–205 прототипа, кроме `.sent form` и `.sent .ok` (теперь работает `hidden`). Правки: `.ok { display: block }` убрать (блок управляется `hidden`), `.demo { color: #B5C3B1 }`, `.err { margin: 0; font-size: 13px; font-weight: 600; color: #F6C9A0 }` (5,9:1 на `--pine`), `input[aria-invalid="true"] { border-color: #F6C9A0 }`, `label` обёртку полей замени на `.field { display: grid; gap: 6px }` с теми же стилями подписи. Медиа: `.final` 1 колонка при 980px, `.row2` 1 колонка при 640px.
+CSS делится на две части.
+
+**Общие стили полей → `src/styles/global.css`**, потому что их использует и окно брони (задача 19). Возьми строки 190–199 прототипа (`form`, `label`, `input, select`, `placeholder`, `option`, `:focus`, `.row2`, `.agree`, `.agree input`) и оформи их под класс `.lead-form` с переменными цвета, чтобы одна и та же база работала на тёмном и светлом фоне:
+
+```css
+.lead-form { display: grid; gap: 12px; align-content: start;
+  --f-label: #C9D4C4; --f-bg: rgba(255,255,255,.08); --f-bg-focus: rgba(255,255,255,.12);
+  --f-border: rgba(255,255,255,.16); --f-text: var(--paper); --f-ph: #93A595; --f-err: #F6C9A0; }
+.lead-form.light { --f-label: var(--ink-2); --f-bg: #fff; --f-bg-focus: #fff; --f-border: var(--line); --f-text: var(--ink); --f-ph: #8A8D91; --f-err: #A23B1F; }
+.lead-form .field { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--f-label); }
+.lead-form input, .lead-form select { font: 500 16px var(--font); padding: 15px 16px; border-radius: 12px; border: 1px solid var(--f-border); background: var(--f-bg); color: var(--f-text); outline: none; }
+.lead-form input::placeholder { color: var(--f-ph); }
+.lead-form select option { color: var(--ink); }
+.lead-form input:focus, .lead-form select:focus { border-color: var(--copper); background: var(--f-bg-focus); }
+.lead-form input[aria-invalid="true"] { border-color: var(--f-err); }
+.lead-form .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lead-form .agree { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; font-size: 13px; color: var(--f-label); }
+.lead-form .agree input { width: 18px; height: 18px; margin: 1px 0 0; padding: 0; accent-color: var(--copper-strong); }
+.lead-form .err { margin: 0; font-size: 13px; font-weight: 600; color: var(--f-err); }
+@media (max-width: 640px) { .lead-form .row2 { grid-template-columns: 1fr; } }
+```
+
+`.f-err` на тёмно-зелёном `#F6C9A0` даёт 5,9:1, на светлом `#A23B1F` даёт 5,9:1. У формы подбора класс `lead-form`, у формы брони `lead-form light`.
+
+**Стили секции → `PickForm.astro`**: строки 185–189 (`.final`, `.final .lead`, `.final ul`, `.final li::before`, без `.final .eyebrow`), 200–202 (`.ok`, `.ok h3`, `.ok p`) **без `display: none` у `.ok`**, 204 (`.demo` с цветом `#B5C3B1`). Строки 203 (`.sent ...`) не переносить, видимость управляется `hidden`. Сама секция не использует `Section`, поэтому задай ей `.pick { padding: clamp(64px, 9vw, 120px) 0; scroll-margin-top: var(--hdr-h); }`. Медиа: `.final` 1 колонка при 980px.
 
 - [ ] **Step 4: index.astro** — `<PickForm />` последним в `<main>`.
 
@@ -1978,7 +2019,7 @@ test.describe('бронь', () => {
 - крестик `<button type="button" class="x" data-close aria-label="Закрыть">×</button>`;
 - `<h3 id="booking-title">Бронь на 7 дней</h3>`, текст из прототипа (с `15&nbsp;000&nbsp;₽`);
 - `.sum`: `<span data-booking-what></span><span>15&nbsp;000&nbsp;₽</span>`;
-- `<form data-kind="booking" novalidate>` с полями `booking-name`, `booking-phone` и чекбоксом `booking-consent` «Согласен на обработку персональных данных» по той же схеме, что в PickForm (`.err`, `aria-describedby`, `aria-required`); кнопка «Перейти к оплате брони»;
+- `<form class="lead-form light" data-kind="booking" novalidate>` с полями `booking-name`, `booking-phone` и чекбоксом `booking-consent` «Согласен на обработку персональных данных» по той же схеме, что в PickForm (`.err`, `aria-describedby`, `aria-required`); кнопка «Перейти к оплате брони»;
 - успех: `<div class="ok" data-lead-success hidden><h3 tabindex="-1" data-lead-success-title>Бронь оформлена</h3><p>Менеджер свяжется, чтобы подобрать конкретную квартиру и этаж.</p><p class="demo">Это учебный сайт: оплаты и бронирования нет.</p></div>`.
 
 Скрипт:
@@ -2011,7 +2052,7 @@ test.describe('бронь', () => {
 </script>
 ```
 
-CSS: строки 212–223 прототипа (`dialog`, `::backdrop`, `.dlg*`) с полями `.field`, `.err { color: #A23B1F }` (на `--card` 5,9:1), `.demo { color: var(--ink-2) }`. Стили инпутов на светлом фоне как в строке 220.
+CSS: строки 212–218 и 221–223 прототипа (`dialog`, `::backdrop`, `.dlg`, `.dlg h3`, `.dlg p`, `.x`, `.sum`, `.dlg .ok`). Строки 219–220 (`.dlg label`, `.dlg input`) не нужны: поля берут общие стили `.lead-form.light` из `global.css`. Добавь `.ok { border-radius: 16px; padding: 20px; background: var(--pine-2) } .ok h3 { font-size: 22px; margin-bottom: 6px } .ok p, .demo { color: var(--ink-2) } .demo { font-size: 12px; margin-top: 8px }`.
 
 - [ ] **Step 3: index.astro** — `<BookingDialog />` после `<MobileBar />`.
 
@@ -2236,8 +2277,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 - [ ] **Step 2:** Чек-лист по каждому дублю: дом совпадает с эталоном (материалы, цвет, рамки, ритм окон; этажность там, где корпус виден целиком), во дворе нет машин, нет текста, логотипов и искажённых лиц или рук, в интерьерах за окном сосны или тот же фасад. Не прошёл, значит перегенерировать (до 3 попыток на кадр), потом спросить Артёма.
 - [ ] **Step 3:** Показать Артёму лучший дубль каждого кадра рядом с эталоном. **Ждать утверждения.**
 - [ ] **Step 4:** `scripts/pick-take.sh <id> <N>` для каждого.
-- [ ] **Step 5:** Подобрать `focus` в `src/assets/photos/index.ts` под каждый кадр, глядя на страницу на 1280 и 375. Главный объект не должен срезаться.
-- [ ] **Step 6:** `npm run test:e2e` (проверка alt и вёрстки на настоящих картинках), commit:
+- [ ] **Step 5:** commit в `feat/images`:
 
 ```bash
 git add src/assets/photos
@@ -2301,6 +2341,8 @@ jobs:
         uses: actions/checkout@v7
       - name: Install, build, and upload
         uses: withastro/action@v6
+        with:
+          node-version: 24
 
   deploy:
     needs: build
@@ -2335,6 +2377,7 @@ Expected: CI на PR зелёный. Если красный, починить �
 
 ### Task 25 (координатор): Финальная проверка и публикация. КОНТРОЛЬНЫЕ ТОЧКИ
 
+- [ ] **Step 0:** Ветка `feat/images` уже смержена в `feat/landing` (см. «Порядок и параллельность»). Подобрать `focus` в `src/assets/photos/index.ts` под каждый кадр, глядя на страницу на 1280 и 375: главный объект не должен срезаться. `npm run test:e2e`, commit.
 - [ ] **Step 1:** Визуальная сверка с прототипом на 1280, 768, 375 (`npm run preview`, браузер). Список расхождений с прототипом, кроме согласованных: тёмная медь, нет плашек, настоящие фото, схемы планировок, иконки двора, чекбокс в брони. Каждое найденное расхождение починить.
 - [ ] **Step 2:** Код-ревью всей ветки (superpowers:requesting-code-review), замечания исправить.
 - [ ] **Step 3:** Показать Артёму превью страницы. **Ждать «публикуем».**
