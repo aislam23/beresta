@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ЖК «Береста», прототип v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F4EFE6; --card:#FBF8F2; --ink:#26282B; --ink-2:#5B5E62;
+    --pine:#2E4A3B; --pine-2:#E3E8DA; --copper:#B9773F; --copper-2:#F1E3D3;
+    --line:rgba(38,40,43,.1); --r:20px; --r-s:12px;
+    --wrap:1200px; --gut:clamp(16px,3vw,32px);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.55 Manrope,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{margin:0;font-weight:800;letter-spacing:-.035em;line-height:1.02;text-wrap:balance}
+  h2{font-size:clamp(30px,4.2vw,52px)}
+  h3{font-size:20px;letter-spacing:-.02em;line-height:1.2}
+  p{margin:0}
+  a{color:inherit}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gut)}
+  section{padding:clamp(64px,9vw,120px) 0;scroll-margin-top:68px}
+  .eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:700;letter-spacing:.02em;color:var(--pine);margin-bottom:18px}
+  .eyebrow::before{content:"";width:22px;height:4px;border-radius:2px;background:var(--ink)}
+  .lead{font-size:clamp(16px,1.4vw,19px);color:var(--ink-2);max-width:620px;margin-top:18px}
+  .head{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;margin-bottom:clamp(32px,4vw,56px)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;font:700 15px/1 Manrope,sans-serif;padding:16px 22px;border-radius:var(--r-s);text-decoration:none;transition:transform .15s, background .15s}
+  .btn:active{transform:scale(.98)}
+  .btn-p{background:var(--pine);color:var(--paper)} .btn-p:hover{background:#243c30}
+  .btn-s{background:#EAE3D6;color:var(--ink)} .btn-s:hover{background:#E2D9C9}
+  .btn-c{background:var(--copper);color:#fff} .btn-c:hover{background:#a76a36}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+
+  /* береста: неровные тёмные чёрточки */
+  .bark{height:14px;background:
+    linear-gradient(90deg,transparent 0 4%,var(--ink) 4% 9%,transparent 9% 21%,var(--ink) 21% 22.5%,transparent 22.5% 37%,var(--ink) 37% 44%,transparent 44% 58%,var(--ink) 58% 59.5%,transparent 59.5% 71%,var(--ink) 71% 75%,transparent 75% 88%,var(--ink) 88% 90%,transparent 90%) 0 3px/100% 3px no-repeat,
+    linear-gradient(90deg,transparent 0 13%,var(--ink) 13% 15%,transparent 15% 29%,var(--ink) 29% 33%,transparent 33% 50%,var(--ink) 50% 51%,transparent 51% 64%,var(--ink) 64% 67.5%,transparent 67.5% 80%,var(--ink) 80% 84%,transparent 84%) 0 9px/100% 2px no-repeat;
+    opacity:.85}
+
+  /* фото-заглушки: на их месте будут кадры Codex */
+  .ph{position:relative;overflow:hidden;border-radius:var(--r);background:linear-gradient(180deg,#E3DDCF 0%,#CFD3C3 50%,#8E9F88 78%,#5F7461 100%);min-height:260px}
+  .ph::after{content:attr(data-shot);position:absolute;right:12px;top:12px;max-width:70%;font-size:11px;font-weight:600;line-height:1.3;background:rgba(38,40,43,.72);color:#F4EFE6;padding:6px 9px;border-radius:8px;text-align:right}
+  .ph svg{position:absolute;left:0;bottom:0;width:100%;height:78%}
+  .ph.warm{background:linear-gradient(180deg,#F1E6D2 0%,#E4D5BC 55%,#B79D7C 100%)}
+  .ph.green{background:linear-gradient(180deg,#DCE3D3 0%,#B9C6AE 55%,#6F8468 100%)}
+  .ph.dawn{background:radial-gradient(70% 60% at 70% 55%,#F3C99C 0%,rgba(243,201,156,0) 70%),linear-gradient(180deg,#C9CFD0 0%,#E6D7C2 60%,#B99B78 100%)}
+
+  /* header */
+  .hdr{position:sticky;top:0;z-index:40;background:rgba(244,239,230,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .hdr .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:24px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:21px;letter-spacing:-.03em;text-decoration:none}
+  .logo i{display:block;width:20px;height:4px;border-radius:2px;background:var(--ink);box-shadow:6px 7px 0 -1px var(--ink)}
+  .nav{display:flex;gap:26px;font-size:14px;font-weight:600}
+  .nav a{text-decoration:none;color:var(--ink-2)} .nav a:hover{color:var(--ink)}
+  .hdr-r{display:flex;align-items:center;gap:18px;font-size:14px;font-weight:700}
+  .hdr-r .tel{text-decoration:none}
+  .hdr .btn{padding:12px 16px;font-size:14px}
+
+  /* hero */
+  .hero{position:relative;padding:0;min-height:max(640px,calc(100svh - 68px));display:flex;flex-direction:column;justify-content:flex-end}
+  .hero-ph{position:absolute;inset:0;border-radius:0;min-height:0;background:
+      radial-gradient(120% 70% at 72% 25%,#FBF4E6 0%,rgba(251,244,230,0) 60%),
+      linear-gradient(180deg,#E9E4D8 0%,#DCD9CC 45%,#C9CDC0 70%,#AEB6A8 100%)}
+  .hero-ph::after{top:auto;bottom:150px}
+  .hero-ph svg{height:70%}
+  .fog{position:absolute;left:-10%;right:-10%;bottom:24%;height:26%;background:linear-gradient(180deg,rgba(244,239,230,0),rgba(244,239,230,.85) 50%,rgba(244,239,230,0));filter:blur(8px);pointer-events:none}
+  .hero .wrap{position:relative;width:100%;padding-top:48px;padding-bottom:28px}
+  .hero-card{background:rgba(251,248,242,.94);backdrop-filter:blur(8px);border-radius:24px;padding:clamp(24px,3.4vw,44px);max-width:620px;margin-bottom:12px;box-shadow:0 20px 50px -30px rgba(38,40,43,.35)}
+  .tag{display:inline-block;font-size:13px;font-weight:700;color:var(--pine);background:var(--pine-2);padding:7px 12px;border-radius:999px}
+  .hero h1{font-size:clamp(40px,6vw,80px);letter-spacing:-.05em;line-height:.95;margin:0}
+  .hero h1 span{color:var(--pine)}
+  .hero .lead{margin-top:18px}
+  .hero .cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .hero .note{font-size:13px;color:var(--ink-2);margin-top:12px}
+  .nums{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .num{background:var(--card);border-radius:18px;padding:18px 20px;font-size:14px;line-height:1.35;color:var(--ink-2);border:1px solid var(--line)}
+  .num b{display:block;font-size:clamp(28px,3vw,40px);font-weight:800;letter-spacing:-.045em;line-height:1;margin-bottom:6px;color:var(--ink)}
+  .num b small{font-size:.48em;letter-spacing:0;margin-left:2px}
+  .num.g{background:var(--pine);color:#D7E0D2;border-color:transparent} .num.g b{color:var(--paper)}
+  .num.c{background:var(--copper);color:#F7E8D8;border-color:transparent} .num.c b{color:#fff}
+
+  /* район */
+  .area{display:grid;grid-template-columns:1.05fr 1fr;gap:12px}
+  .map{background:var(--card);border-radius:var(--r);border:1px solid var(--line);position:relative;min-height:520px;overflow:hidden}
+  .map svg{position:absolute;inset:0;width:100%;height:100%}
+  .dist{display:grid;gap:12px;align-content:start}
+  .dist-row{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;background:var(--card);border-radius:16px;padding:18px 20px;border:1px solid var(--line)}
+  .dist-row b{font-size:28px;font-weight:800;letter-spacing:-.04em;line-height:1}
+  .dist-row b small{font-size:14px;letter-spacing:0}
+  .dist-row span{color:var(--ink-2);font-size:15px;line-height:1.4}
+  .dist-row span strong{color:var(--ink);display:block;font-weight:700}
+
+  /* двор */
+  .yard{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+  .yard .ph{grid-column:span 7;min-height:460px}
+  .yard-list{grid-column:span 5;display:grid;gap:12px}
+  .feat{background:var(--card);border-radius:16px;padding:18px 20px;border:1px solid var(--line);display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start}
+  .ico{width:44px;height:44px;border-radius:12px;background:var(--pine-2);display:grid;place-items:center;color:var(--pine)}
+  .feat h3{font-size:16px;margin-bottom:2px}
+  .feat p{font-size:14px;color:var(--ink-2);line-height:1.45}
+  .yard-strip{grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .shop{background:var(--copper-2);border-radius:16px;padding:16px 18px;font-weight:700;font-size:15px;display:flex;justify-content:space-between;align-items:center}
+  .shop small{font-weight:500;color:var(--ink-2);font-size:13px}
+
+  /* для кого */
+  .who{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .who-c{background:var(--card);border-radius:var(--r);border:1px solid var(--line);overflow:hidden;display:flex;flex-direction:column}
+  .who-c .ph{border-radius:0;min-height:200px}
+  .who-c .body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:10px;flex:1}
+  .who-c p{font-size:15px;color:var(--ink-2);line-height:1.5}
+  .fit{margin-top:auto;padding-top:14px;border-top:1px dashed var(--line);font-size:13px;line-height:1.4}
+  .fit b{display:block;font-size:15px}
+
+  /* квартиры */
+  .flats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .flat{background:var(--card);border-radius:var(--r);border:1px solid var(--line);padding:22px;display:flex;flex-direction:column;gap:14px}
+  .flat .plan{height:180px;border-radius:14px;background:#F0EADF;display:grid;place-items:center;color:var(--ink-2)}
+  .flat .top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .flat .area-m{font-size:14px;color:var(--ink-2);font-weight:600;white-space:nowrap}
+  .flat .price{font-size:30px;font-weight:800;letter-spacing:-.04em;line-height:1}
+  .flat .price small{font-size:15px;font-weight:600;color:var(--ink-2);letter-spacing:0}
+  .flat .fx{font-size:14px;color:var(--ink-2)}
+  .flat .acts{display:flex;gap:8px;margin-top:auto}
+  .flat .acts .btn{flex:1;padding:14px 12px;font-size:14px}
+  .flat.pent{background:var(--ink);color:var(--paper);border-color:transparent}
+  .flat.pent .plan{background:#34373B;color:#A9ACAF} .flat.pent .area-m,.flat.pent .fx,.flat.pent .price small{color:#B9BCBF}
+  .flat.pent .btn-s{background:#3A3D41;color:var(--paper)}
+  .pill{font-size:12px;font-weight:700;background:var(--copper);color:#fff;padding:4px 9px;border-radius:999px;align-self:flex-start}
+  .flats-note{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  .box{background:var(--pine-2);border-radius:16px;padding:20px 22px;font-size:15px;line-height:1.5}
+  .box b{display:block;margin-bottom:4px}
+  .box.c{background:var(--copper-2)}
+
+  /* корпуса */
+  .houses{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .house{background:var(--card);border-radius:var(--r);border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;gap:16px}
+  .house .n{display:flex;justify-content:space-between;align-items:baseline}
+  .house .n b{font-size:22px;font-weight:800;letter-spacing:-.03em}
+  .house .n span{font-size:14px;color:var(--ink-2);font-weight:600}
+  .house .when{font-size:36px;font-weight:800;letter-spacing:-.045em;line-height:1}
+  .house .st{font-size:15px;color:var(--ink-2)}
+  .steps{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}
+  .steps i{height:8px;border-radius:4px;background:#E6DFD2}
+  .steps i.on{background:var(--pine)}
+  .steps-l{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-2);margin-top:-8px}
+  .house.now{background:var(--pine);color:var(--paper);border-color:transparent}
+  .house.now .n span,.house.now .st,.house.now .steps-l{color:#C9D4C4}
+  .house.now .steps i{background:rgba(255,255,255,.18)} .house.now .steps i.on{background:#F4EFE6}
+  .bar{height:8px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden}
+  .bar i{display:block;height:100%;width:95%;background:var(--copper)}
+
+  /* как купить */
+  .buy{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .buy-c{background:var(--card);border-radius:var(--r);border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;gap:8px;min-height:200px}
+  .buy-c b.big{font-size:44px;font-weight:800;letter-spacing:-.05em;line-height:1;margin-bottom:8px}
+  .buy-c p{color:var(--ink-2);font-size:15px}
+  .buy-c.acc{background:var(--copper);color:#fff;border-color:transparent} .buy-c.acc p{color:#F7E8D8}
+  .buy-c.acc .btn{margin-top:auto;background:#fff;color:var(--ink);align-self:flex-start}
+
+  /* застройщик */
+  .dev{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .dev-nums{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .dev-nums .num{padding:24px}
+  .escrow{background:var(--ink);color:var(--paper);border-radius:var(--r);padding:clamp(24px,3vw,40px);display:flex;flex-direction:column;gap:16px}
+  .escrow h3{font-size:28px;letter-spacing:-.035em}
+  .escrow p{color:#C4C6C8}
+  .flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin-top:auto}
+  .flow div{background:#34373B;border-radius:12px;padding:14px;font-size:13px;line-height:1.35}
+  .flow div b{display:block;font-size:15px;color:#fff}
+  .flow span{color:var(--copper);font-weight:800}
+
+  /* сомнения */
+  .faq{display:grid;gap:10px;max-width:900px}
+  details{background:var(--card);border-radius:16px;border:1px solid var(--line);padding:0 22px}
+  summary{list-style:none;cursor:pointer;padding:22px 0;font-weight:700;font-size:18px;display:flex;justify-content:space-between;gap:16px;align-items:center}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-size:26px;font-weight:500;color:var(--pine);transition:transform .2s}
+  details[open] summary::after{transform:rotate(45deg)}
+  details p{padding:0 0 22px;color:var(--ink-2);max-width:720px}
+
+  /* форма */
+  .final{background:var(--pine);color:var(--paper);border-radius:28px;padding:clamp(28px,5vw,64px);display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,4vw,64px);position:relative;overflow:hidden}
+  .final .eyebrow{color:#C9D4C4} .final .eyebrow::before{background:var(--paper)}
+  .final .lead{color:#C9D4C4}
+  .final ul{margin:24px 0 0;padding:0;list-style:none;display:grid;gap:10px;color:#DCE3D6;font-size:15px}
+  .final li::before{content:"";display:inline-block;width:14px;height:3px;border-radius:2px;background:var(--copper);margin-right:10px;vertical-align:middle}
+  form{display:grid;gap:12px;align-content:start}
+  label{display:grid;gap:6px;font-size:13px;font-weight:600;color:#C9D4C4}
+  input,select{font:500 16px Manrope,sans-serif;padding:15px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:var(--paper);outline:none}
+  input::placeholder{color:#93A595}
+  select option{color:var(--ink)}
+  input:focus,select:focus{border-color:var(--copper);background:rgba(255,255,255,.12)}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .agree{display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:13px;color:#B5C3B1}
+  .agree input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--copper)}
+  .final .btn-c{padding:18px 22px;font-size:16px}
+  .ok{display:none;background:rgba(255,255,255,.08);border-radius:16px;padding:24px}
+  .ok h3{font-size:24px;margin-bottom:8px}
+  .ok p{color:#C9D4C4}
+  .sent form{display:none} .sent .ok{display:block}
+  .demo{font-size:12px;color:#93A595;margin-top:8px}
+
+  /* footer */
+  footer{padding:48px 0 96px;font-size:14px;color:var(--ink-2)}
+  footer .wrap{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:24px}
+  footer b{color:var(--ink)}
+  .disc{grid-column:1/-1;border-top:1px solid var(--line);padding-top:20px;font-size:12px}
+
+  /* модалка брони */
+  dialog{border:0;border-radius:24px;padding:0;max-width:480px;width:calc(100% - 32px);background:var(--card);color:var(--ink)}
+  dialog::backdrop{background:rgba(38,40,43,.5);backdrop-filter:blur(3px)}
+  .dlg{padding:28px;display:grid;gap:14px}
+  .dlg h3{font-size:26px;letter-spacing:-.035em}
+  .dlg p{color:var(--ink-2);font-size:15px}
+  .dlg label{color:var(--ink-2)}
+  .dlg input{background:#fff;border-color:var(--line);color:var(--ink)}
+  .dlg .x{position:absolute;right:16px;top:14px;background:none;border:0;font-size:28px;cursor:pointer;color:var(--ink-2)}
+  .dlg .sum{display:flex;justify-content:space-between;background:var(--copper-2);border-radius:12px;padding:14px 16px;font-weight:700}
+  .dlg .ok{background:var(--pine-2)} .dlg .ok p{color:var(--ink-2)}
+
+  /* мобильная плашка */
+  .mbar{display:none}
+
+  @media (max-width:980px){
+    .nav{display:none}
+    .nums,.who,.yard-strip{grid-template-columns:1fr 1fr}
+    .area,.dev,.final{grid-template-columns:1fr}
+    .yard .ph,.yard-list{grid-column:1/-1}
+    .flats,.houses,.buy{grid-template-columns:1fr 1fr}
+    .map{min-height:380px}
+  }
+  @media (max-width:640px){
+    .hdr-r .tel{display:none}
+    .hero{min-height:auto;padding-top:300px}
+    .hero-ph{bottom:auto;height:420px}
+    .hero-card{border-radius:20px}
+    .head{grid-template-columns:1fr}
+    .flats,.houses,.buy,.flats-note,.row2,.dev-nums,.who{grid-template-columns:1fr}
+    .yard-strip{grid-template-columns:1fr}
+    .dist-row{grid-template-columns:90px 1fr}
+    .flow{grid-template-columns:1fr}
+    .flow span{transform:rotate(90deg);justify-self:center}
+    footer .wrap{grid-template-columns:1fr}
+    .mbar{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:50;gap:8px}
+    .mbar .btn{flex:1;box-shadow:0 10px 30px -10px rgba(0,0,0,.4)}
+  }
+</style>
+</head>
+<body>
+
+<!-- общие SVG -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <g id="pines">
+      <path d="M0 300 L0 210 L18 170 L10 172 L26 130 L18 132 L34 92 L50 132 L42 130 L58 172 L50 170 L68 210 L68 300Z"/>
+      <path d="M60 300 L60 200 L80 150 L72 152 L90 104 L82 106 L100 60 L118 106 L110 104 L128 152 L120 150 L140 200 L140 300Z"/>
+      <path d="M130 300 L130 220 L146 186 L139 188 L153 150 L146 152 L160 118 L174 152 L167 150 L181 188 L174 186 L190 220 L190 300Z"/>
+      <path d="M840 300 L840 196 L860 150 L852 152 L870 104 L862 106 L880 58 L898 106 L890 104 L908 152 L900 150 L920 196 L920 300Z"/>
+      <path d="M905 300 L905 214 L922 176 L915 178 L930 138 L923 140 L938 100 L953 140 L946 138 L961 178 L954 176 L971 214 L971 300Z"/>
+      <path d="M960 300 L960 190 L982 140 L973 142 L993 90 L984 92 L1004 40 L1024 92 L1015 90 L1035 142 L1026 140 L1048 190 L1048 300Z"/>
+    </g>
+    <g id="towers">
+      <rect x="0" y="125" width="120" height="135" rx="2"/>
+      <rect x="135" y="80" width="120" height="180" rx="2"/>
+      <rect x="270" y="50" width="130" height="210" rx="2"/>
+    </g>
+    <pattern id="win" width="15" height="15" patternUnits="userSpaceOnUse"><rect x="3" y="4" width="9" height="8" fill="#B5AE9E"/></pattern>
+    <g id="scene">
+      <g transform="translate(520,40)"><use href="#towers" fill="#ECE6DA"/><g fill="url(#win)" opacity=".7"><rect x="8" y="135" width="104" height="120"/><rect x="143" y="90" width="104" height="165"/><rect x="278" y="60" width="114" height="195"/></g></g>
+      <g fill="#7E8C7C" opacity=".5" transform="translate(0,10)"><use href="#pines"/></g>
+      <g fill="#3F5444" transform="translate(-40,40) scale(1.08)"><use href="#pines"/></g>
+    </g>
+  </defs>
+</svg>
+
+<header class="hdr">
+  <div class="wrap">
+    <a class="logo" href="#top"><i></i>береста</a>
+    <nav class="nav">
+      <a href="#area">Район</a><a href="#yard">Двор</a><a href="#flats">Квартиры</a><a href="#buy">Как купить</a><a href="#dev">Застройщик</a>
+    </nav>
+    <div class="hdr-r">
+      <a class="tel" href="tel:+78430001212">+7 843 000-12-12</a>
+      <a class="btn btn-p" href="#pick">Подобрать квартиру</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- 1. ПЕРВЫЙ ЭКРАН -->
+<section class="hero">
+  <div class="ph hero-ph" data-shot="Кадр 01 · ЭТАЛОН: три корпуса 9/12/14 эт. над соснами, утренний туман с реки">
+    <svg viewBox="0 0 1100 300" preserveAspectRatio="xMidYMax slice"><use href="#scene"/></svg>
+  </div>
+  <div class="fog"></div>
+  <div class="wrap">
+    <div class="hero-card">
+      <h1>Город за спиной, <span>лес за&nbsp;окном</span></h1>
+      <p class="lead">Три дома у соснового бора и реки, в 15 минутах от центра Казани. Машины стоят в подземном паркинге, во двор они не заезжают.</p>
+      <div class="cta">
+        <a class="btn btn-p" href="#pick">Подобрать 3–5 вариантов</a>
+        <a class="btn btn-s" href="#flats">Планировки и цены</a>
+      </div>
+      <p class="note">Менеджер соберёт варианты под ваш бюджет и ипотеку. Консультация занимает 30 минут.</p>
+    </div>
+    <div class="nums">
+      <div class="num"><b>200<small>м</small></b>до соснового бора</div>
+      <div class="num g"><b>15<small>мин</small></b>до центра на машине</div>
+      <div class="num"><b>9<small>мин</small></b>пешком до метро</div>
+      <div class="num c"><b>6,6<small>млн ₽</small></b>цена студии от</div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. РАЙОН -->
+<section id="area">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2>Лес в 200 метрах,<br>центр в 15 минутах</h2>
+        <p class="lead">Комплекс построен на краю города, у соснового бора. Школа, два детских сада, поликлиника и ТЦ «Сосны» уже работают.</p>
+      </div>
+    </div>
+    <div class="area">
+      <div class="map" aria-label="Схема района">
+        <svg viewBox="0 0 600 520" preserveAspectRatio="xMidYMid slice">
+          <rect width="600" height="520" fill="#F3EEE4"/>
+          <path d="M0 360 C120 330 200 420 320 400 S520 330 600 350 L600 520 L0 520Z" fill="#CFDCD8"/>
+          <path d="M0 372 C120 342 200 432 320 412 S520 342 600 362" fill="none" stroke="#B9773F" stroke-width="3" stroke-dasharray="8 6"/>
+          <ellipse cx="150" cy="170" rx="170" ry="120" fill="#C9D6BF"/>
+          <g fill="#6F8468">
+            <circle cx="70" cy="140" r="9"/><circle cx="110" cy="110" r="11"/><circle cx="160" cy="150" r="9"/><circle cx="210" cy="120" r="10"/><circle cx="90" cy="200" r="10"/><circle cx="140" cy="230" r="8"/><circle cx="200" cy="200" r="11"/><circle cx="250" cy="170" r="8"/><circle cx="40" cy="250" r="9"/>
+          </g>
+          <path d="M600 60 L380 210" stroke="#DCD3C3" stroke-width="18"/>
+          <path d="M600 60 L380 210" stroke="#fff" stroke-width="2" stroke-dasharray="10 10"/>
+          <g transform="translate(330,230)"><rect x="-38" y="-30" width="76" height="60" rx="10" fill="#26282B"/><rect x="-28" y="-20" width="16" height="40" rx="2" fill="#F4EFE6"/><rect x="-8" y="-24" width="16" height="44" rx="2" fill="#F4EFE6"/><rect x="12" y="-28" width="16" height="48" rx="2" fill="#F4EFE6"/></g>
+          <g font-family="Manrope" font-size="14" font-weight="700" fill="#26282B">
+            <text x="300" y="290">ЖК «Береста»</text>
+            <text x="60" y="60">Сосновый бор · 200 м</text>
+            <text x="360" y="470">Набережная · 350 м</text>
+            <text x="40" y="480" fill="#9A6A3F">Велодорожка 6 км</text>
+            <text x="440" y="130">Метро · 9 мин</text>
+            <text x="470" y="250">Школа · 5 мин</text>
+            <text x="430" y="320">ТЦ «Сосны»</text>
+          </g>
+          <circle cx="460" cy="120" r="7" fill="#B9773F"/><circle cx="480" cy="240" r="7" fill="#2E4A3B"/><circle cx="420" cy="314" r="7" fill="#2E4A3B"/>
+        </svg>
+      </div>
+      <div class="dist">
+        <div class="dist-row"><b>200<small> м</small></b><span><strong>Сосновый бор</strong>Три минуты пешком, можно гулять с коляской каждый день</span></div>
+        <div class="dist-row"><b>350<small> м</small></b><span><strong>Набережная реки</strong>Свой выход к реке, вдоль неё 6 км велодорожки</span></div>
+        <div class="dist-row"><b>9<small> мин</small></b><span><strong>Станция метро</strong>Пешком от подъезда до станции</span></div>
+        <div class="dist-row"><b>5<small> мин</small></b><span><strong>Школа на 1 100 мест</strong>Пешком, рядом два детских сада</span></div>
+        <div class="dist-row"><b>15<small> мин</small></b><span><strong>Центр Казани</strong>На машине, на общественном транспорте 25 минут</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="bark"></div></div>
+
+<!-- 3. ДВОР -->
+<section id="yard">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2>Двор, куда детей можно<br>отпустить гулять одних</h2>
+        <p class="lead">Въезд во двор закрыт, все машины уезжают в подземный паркинг.</p>
+      </div>
+    </div>
+    <div class="yard">
+      <div class="ph green" data-shot="Кадр 02 · двор без машин между корпусами, дети на площадке, сосны за домами">
+        <svg viewBox="0 0 1100 300" preserveAspectRatio="xMidYMax slice"><use href="#scene"/></svg>
+      </div>
+      <div class="yard-list">
+        <div class="feat"><div class="ico">P</div><div><h3>Подземный паркинг на 320 мест</h3><p>Машино-место стоит от 1,9 млн ₽.</p></div></div>
+        <div class="feat"><div class="ico">◐</div><div><h3>Площадки для всех возрастов</h3><p>Отдельно для малышей и для детей постарше. Рядом воркаут-зона и место для барбекю.</p></div></div>
+        <div class="feat"><div class="ico">⌂</div><div><h3>Лобби с консьержем</h3><p>Входная группа высотой 5 метров. Колясочная и велосипедная на первом этаже каждого подъезда.</p></div></div>
+        <div class="feat"><div class="ico">▤</div><div><h3>Кладовки от 4 м²</h3><p>В подвале. Туда помещаются зимние шины и санки.</p></div></div>
+      </div>
+      <div class="yard-strip">
+        <div class="shop">Кофейня <small>1 этаж</small></div>
+        <div class="shop">Пекарня <small>1 этаж</small></div>
+        <div class="shop">Пункт выдачи <small>1 этаж</small></div>
+        <div class="shop">Частный детский сад <small>1 этаж</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. ДЛЯ КОГО -->
+<section id="who" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2>Кому подойдёт<br>«Береста»</h2>
+      </div>
+    </div>
+    <div class="who">
+      <article class="who-c">
+        <div class="ph warm" data-shot="Кадр 03 · мама с коляской на тропинке в бору, дом на фоне"></div>
+        <div class="body">
+          <h3>Семья с малышом</h3>
+          <p>До бора 200 метров, с коляской можно гулять каждый день. Школа в пяти минутах пешком, рядом два детских сада.</p>
+          <div class="fit"><b>2-комнатная, 56–64 м²</b>семейная ипотека от 6%</div>
+        </div>
+      </article>
+      <article class="who-c">
+        <div class="ph" data-shot="Кадр 04 · рабочий стол у окна с видом на сосны, утро"></div>
+        <div class="body">
+          <h3>Работаю из дома</h3>
+          <p>Кофейня на первом этаже, вдоль реки 6 км велодорожки. Если нужно в офис, до метро 9 минут пешком.</p>
+          <div class="fit"><b>Студия или 1-комнатная</b>IT-ипотека от 6%</div>
+        </div>
+      </article>
+      <article class="who-c">
+        <div class="ph green" data-shot="Кадр 05 · просторная кухня-гостиная, семья с подростками"></div>
+        <div class="body">
+          <h3>Детям нужно по комнате</h3>
+          <p>В трёхкомнатной две ванные, окна выходят на обе стороны дома. Старую квартиру можно зачесть через trade-in.</p>
+          <div class="fit"><b>3-комнатная, 78–88 м²</b>trade-in, паркинг от 1,9 млн ₽</div>
+        </div>
+      </article>
+      <article class="who-c">
+        <div class="ph dawn" data-shot="Кадр 06 · корпус 3 на стадии строительства, кран, рассвет"></div>
+        <div class="body">
+          <h3>Вложить деньги</h3>
+          <p>Студии в корпусе 3 продаются по стартовым ценам. Дом сдаётся в IV квартале 2027 года, после этого квартиру можно продать или сдавать.</p>
+          <div class="fit"><b>Студия от 6,6 млн ₽</b>рассрочка 0% до сдачи дома</div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 5. КВАРТИРЫ -->
+<section id="flats" style="background:#EFE8DC">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2>Пять планировок,<br>цены от 6,6 млн ₽</h2>
+        <p class="lead">Квартиры сдаются в white box: стены выровнены, сделаны стяжка и разводка. Чистовую отделку можно заказать за доплату. Средняя цена 245 000 ₽ за м².</p>
+      </div>
+    </div>
+    <div class="flats">
+      <article class="flat">
+        <div class="plan">план студии</div>
+        <div class="top"><h3>Студия</h3><span class="area-m">26–31 м²</span></div>
+        <div class="price"><small>от</small> 6,6 <small>млн ₽</small></div>
+        <p class="fx">Кухня-ниша и французский балкон</p>
+        <div class="acts"><button class="btn btn-c" data-book="Студия · от 6,6 млн ₽">Забронировать</button><a class="btn btn-s" href="#pick">Подобрать</a></div>
+      </article>
+      <article class="flat">
+        <div class="plan">план 1-комнатной</div>
+        <div class="top"><h3>1-комнатная</h3><span class="area-m">38–44 м²</span></div>
+        <div class="price"><small>от</small> 9,4 <small>млн ₽</small></div>
+        <p class="fx">Кухня-гостиная 16 м²</p>
+        <div class="acts"><button class="btn btn-c" data-book="1-комнатная · от 9,4 млн ₽">Забронировать</button><a class="btn btn-s" href="#pick">Подобрать</a></div>
+      </article>
+      <article class="flat">
+        <div class="plan">план 2-комнатной</div>
+        <div class="top"><h3>2-комнатная</h3><span class="area-m">56–64 м²</span></div>
+        <div class="price"><small>от</small> 13,5 <small>млн ₽</small></div>
+        <p class="fx">Мастер-спальня с гардеробной</p>
+        <div class="acts"><button class="btn btn-c" data-book="2-комнатная · от 13,5 млн ₽">Забронировать</button><a class="btn btn-s" href="#pick">Подобрать</a></div>
+      </article>
+      <article class="flat">
+        <div class="plan">план 3-комнатной</div>
+        <div class="top"><h3>3-комнатная</h3><span class="area-m">78–88 м²</span></div>
+        <div class="price"><small>от</small> 18,7 <small>млн ₽</small></div>
+        <p class="fx">Две ванные, окна на две стороны</p>
+        <div class="acts"><button class="btn btn-c" data-book="3-комнатная · от 18,7 млн ₽">Забронировать</button><a class="btn btn-s" href="#pick">Подобрать</a></div>
+      </article>
+      <article class="flat pent">
+        <div class="plan">план пентхауса</div>
+        <div class="top"><h3>Пентхаус</h3><span class="area-m">118–140 м²</span></div>
+        <div class="price"><small>от</small> 33 <small>млн ₽</small></div>
+        <p class="fx">Терраса 40 м², потолки 3,6 м. Только в корпусе 3</p>
+        <div class="acts"><button class="btn btn-c" data-book="Пентхаус · от 33 млн ₽">Забронировать</button><a class="btn btn-s" href="#pick">Подобрать</a></div>
+      </article>
+      <article class="flat" style="justify-content:center;background:var(--pine);color:var(--paper);border-color:transparent">
+        <h3 style="font-size:26px">Не знаете, что выбрать?</h3>
+        <p style="color:#C9D4C4">Расскажите, сколько вас и какой бюджет. Менеджер пришлёт 3–5 квартир с расчётом платежа по ипотеке.</p>
+        <a class="btn btn-c" href="#pick" style="align-self:flex-start">Получить подборку</a>
+      </article>
+    </div>
+    <div class="flats-note">
+      <div class="box c"><b>Бронь онлайн за 15 000 ₽</b>Квартиру снимаем с продажи на 7 дней. Сумма войдёт в стоимость квартиры. Если передумаете, деньги вернём.</div>
+      <div class="box"><b>Машино-место от 1,9 млн ₽</b>Подземный паркинг на 320 мест. Кладовки в подвале от 4 м².</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. КОРПУСА И СРОКИ -->
+<section id="houses">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2>Первый дом сдаём<br>в этом квартале</h2>
+        <p class="lead">Корпус 1 готов на 95%. В корпусе 3 только начались продажи.</p>
+      </div>
+    </div>
+    <div class="houses">
+      <article class="house now">
+        <div class="n"><b>Корпус 1</b><span>9 этажей · 126 квартир</span></div>
+        <div class="when">IV кв. 2026</div>
+        <div class="bar"><i></i></div>
+        <p class="st">Готовность 95%. Идёт благоустройство двора.</p>
+      </article>
+      <article class="house">
+        <div class="n"><b>Корпус 2</b><span>12 этажей · 168 квартир</span></div>
+        <div class="when">II кв. 2027</div>
+        <div class="steps"><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></div>
+        <div class="steps-l"><span>каркас</span><span>фасад</span><span>сдача</span></div>
+        <p class="st">Отделывают фасад.</p>
+      </article>
+      <article class="house">
+        <div class="n"><b>Корпус 3</b><span>14 этажей · 196 квартир</span></div>
+        <div class="when">IV кв. 2027</div>
+        <div class="steps"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+        <div class="steps-l"><span>старт</span><span>фасад</span><span>сдача</span></div>
+        <p class="st">Старт продаж по начальным ценам. Пентхаусы есть только в этом доме.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="bark"></div></div>
+
+<!-- 7. КАК КУПИТЬ -->
+<section id="buy">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2>Ипотека от 6%<br>или рассрочка без переплаты</h2>
+      </div>
+    </div>
+    <div class="buy">
+      <div class="buy-c"><b class="big">6%</b><h3>Семейная ипотека</h3><p>Для семей с детьми.</p></div>
+      <div class="buy-c"><b class="big">6%</b><h3>IT-ипотека</h3><p>Для сотрудников аккредитованных IT-компаний.</p></div>
+      <div class="buy-c"><b class="big">0%</b><h3>Рассрочка до сдачи дома</h3><p>Первый взнос от 30%, остаток выплачиваете до сдачи дома без процентов.</p></div>
+      <div class="buy-c"><h3>Рыночная ипотека</h3><p>В банках-партнёрах застройщика.</p></div>
+      <div class="buy-c"><h3>Trade-in</h3><p>Старую квартиру зачтём в стоимость новой. Продавать её заранее самому не придётся.</p></div>
+      <div class="buy-c acc"><h3>Бронь онлайн</h3><p>15 000 ₽ на 7 дней. За это время можно спокойно оформить ипотеку.</p><a class="btn" href="#flats">Выбрать квартиру</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. ЗАСТРОЙЩИК -->
+<section id="dev" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2>СК «Высота-16»<br>строит в Казани с 2011 года</h2>
+      </div>
+    </div>
+    <div class="dev">
+      <div class="dev-nums">
+        <div class="num"><b>14</b>сданных домов</div>
+        <div class="num g"><b>3 800</b>квартир передали владельцам</div>
+        <div class="num"><b>2011</b>год, с которого работаем</div>
+        <div class="num c"><b>0</b>переносов срока больше чем на квартал</div>
+      </div>
+      <div class="escrow">
+        <h3>До сдачи дома деньги лежат в банке</h3>
+        <p>Квартиры продаются через эскроу-счета. Вы платите в банк, и банк держит деньги на счёте. Застройщик получает их только после сдачи дома. Если дом не сдадут, банк вернёт деньги вам.</p>
+        <div class="flow">
+          <div><b>Вы</b>оплачиваете квартиру</div><span>→</span>
+          <div><b>Банк</b>хранит деньги на эскроу</div><span>→</span>
+          <div><b>Дом сдан</b>банк переводит деньги застройщику</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. СОМНЕНИЯ -->
+<section id="faq" style="background:#EFE8DC">
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <h2>О чём спрашивают<br>перед покупкой</h2>
+      </div>
+    </div>
+    <div class="faq">
+      <details open><summary>А если дом не сдадут вовремя?</summary><p>У застройщика 14 сданных домов, и ни один срок не переносили больше чем на квартал. Корпус 1 готов на 95%. Деньги до сдачи лежат на эскроу-счёте в банке, и застройщик не может их потратить.</p></details>
+      <details><summary>Это же далеко от центра?</summary><p>15 минут на машине и 25 минут на общественном транспорте. До метро 9 минут пешком.</p></details>
+      <details><summary>Окраина, наверное, ничего рядом нет?</summary><p>Школа на 1 100 мест в пяти минутах пешком, два детских сада, поликлиника и ТЦ «Сосны» уже работают. На первых этажах будут кофейня, пекарня, пункт выдачи и детский сад.</p></details>
+      <details><summary>Дорого.</summary><p>Есть семейная и IT-ипотека от 6%, рассрочка 0% до сдачи дома при взносе от 30% и trade-in, если у вас уже есть квартира. Самые низкие цены сейчас в корпусе 3.</p></details>
+      <details><summary>Будет шумно и много машин?</summary><p>Двор закрыт для машин, паркинг на 320 мест под землёй.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- 10. ФОРМА ПОДБОРА -->
+<section id="pick">
+  <div class="wrap">
+    <div class="final" id="pickBox">
+      <div>
+        <h2>Подберём <span style="white-space:nowrap">3–5 квартир</span><br>под ваш бюджет</h2>
+        <p class="lead">Оставьте телефон. Менеджер позвонит и пришлёт подборку с расчётом ежемесячного платежа.</p>
+        <ul>
+          <li>Консультация занимает 30 минут</li>
+        </ul>
+      </div>
+      <div>
+        <form data-demo>
+          <div class="row2">
+            <label>Имя<input name="name" required placeholder="Как к вам обращаться" autocomplete="given-name"></label>
+            <label>Телефон<input name="phone" required type="tel" placeholder="+7 900 000-00-00" autocomplete="tel"></label>
+          </div>
+          <label>Бюджет
+            <select name="budget"><option>До 8 млн ₽</option><option>8–12 млн ₽</option><option>12–18 млн ₽</option><option>Больше 18 млн ₽</option><option>Пока не знаю</option></select>
+          </label>
+          <label>Как планируете покупать
+            <select name="way"><option>Семейная ипотека</option><option>IT-ипотека</option><option>Обычная ипотека</option><option>Рассрочка</option><option>Trade-in</option><option>Пока не решили</option></select>
+          </label>
+          <label class="agree"><input type="checkbox" required>Согласен на обработку персональных данных</label>
+          <button class="btn btn-c" type="submit">Получить подборку</button>
+        </form>
+        <div class="ok">
+          <h3>Заявка принята</h3>
+          <p>Менеджер позвонит по номеру, который вы оставили.</p>
+          <p class="demo">Это учебный сайт, поэтому заявка никуда не отправлена.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><a class="logo" href="#top"><i></i>береста</a><p style="margin-top:12px">Жилой комплекс у соснового бора и реки</p></div>
+    <div><b>Офис продаж</b><br>Казань, ул. Сосновая, 12</div>
+    <div><b><a href="tel:+78430001212" style="text-decoration:none">+7 843 000-12-12</a></b><br>СК «Высота-16»</div>
+    <p class="disc">Учебный проект. Жилой комплекс, застройщик, адрес, телефон и цифры вымышлены. Заявки с сайта никуда не отправляются.</p>
+  </div>
+</footer>
+
+<div class="mbar"><a class="btn btn-p" href="#pick">Подобрать квартиру</a><a class="btn btn-s" href="tel:+78430001212">Позвонить</a></div>
+
+<dialog id="book">
+  <div class="dlg" style="position:relative">
+    <button class="x" aria-label="Закрыть" onclick="this.closest('dialog').close()">×</button>
+    <h3>Бронь на 7 дней</h3>
+    <p>Квартиру снимем с продажи. 15 000 ₽ пойдут в счёт стоимости, а если передумаете, вернём их.</p>
+    <div class="sum"><span id="bookWhat">Студия</span><span>15 000 ₽</span></div>
+    <form data-demo>
+      <label>Имя<input required placeholder="Как к вам обращаться"></label>
+      <label>Телефон<input required type="tel" placeholder="+7 900 000-00-00"></label>
+      <button class="btn btn-c" type="submit">Перейти к оплате брони</button>
+    </form>
+    <div class="ok"><h3>Бронь оформлена</h3><p>Менеджер свяжется, чтобы подобрать конкретную квартиру и этаж.</p><p class="demo">Это учебный сайт: оплаты и бронирования нет.</p></div>
+  </div>
+</dialog>
+
+<script>
+  document.querySelectorAll('form[data-demo]').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();f.parentElement.classList.add('sent')}));
+  const dlg=document.getElementById('book');
+  document.querySelectorAll('[data-book]').forEach(b=>b.addEventListener('click',()=>{
+    dlg.querySelector('.dlg').classList.remove('sent');
+    document.getElementById('bookWhat').textContent=b.dataset.book;
+    dlg.showModal();
+  }));
+</script>
+</body>
+</html>

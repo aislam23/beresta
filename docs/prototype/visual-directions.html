@@ -1,0 +1,227 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  .dir { margin: 0 0 36px; }
+  .dir .option { display:block; padding:0; overflow:hidden; }
+  .dir .meta { display:flex; gap:16px; align-items:baseline; padding:16px 20px; }
+  .dir .meta h3 { margin:0; }
+  .dir .meta p { margin:0; opacity:.75; }
+  .frame { width:100%; aspect-ratio: 16/8.2; position:relative; overflow:hidden; }
+  .swatches { display:flex; gap:6px; padding:0 20px 16px; align-items:center; font-size:12px; opacity:.85; }
+  .swatches i { width:22px; height:22px; border-radius:50%; display:inline-block; border:1px solid rgba(0,0,0,.12); }
+  .swatches span { margin-left:8px; }
+
+  /* ---------- A: Утренний туман ---------- */
+  .a { background:#F6F2EA; color:#23262A; font-family:'Manrope',sans-serif; }
+  .a .sky { position:absolute; inset:0; background:
+      radial-gradient(120% 70% at 70% 30%, #FBF4E6 0%, rgba(251,244,230,0) 60%),
+      linear-gradient(180deg,#E9E4D8 0%,#DCD9CC 45%,#C9CDC0 70%,#AEB6A8 100%); }
+  .a .fog { position:absolute; left:-10%; right:-10%; height:28%; bottom:22%;
+      background:linear-gradient(180deg, rgba(246,242,234,0), rgba(246,242,234,.9) 50%, rgba(246,242,234,0)); filter:blur(6px); }
+  .a nav { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; padding:2.2% 4%; font-size:13px; letter-spacing:.02em; }
+  .a nav b { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; letter-spacing:.04em; }
+  .a nav .links { display:flex; gap:26px; opacity:.8; }
+  .a nav .btn { border:1px solid #23262A; padding:8px 16px; border-radius:999px; }
+  .a .copy { position:absolute; left:4%; top:22%; width:52%; }
+  .a .eyebrow { font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:#9A6A3F; margin-bottom:14px; }
+  .a h1 { font-family:'Cormorant Garamond',serif; font-weight:500; font-size:clamp(34px,5.4vw,74px); line-height:.95; margin:0 0 18px; letter-spacing:-.01em; }
+  .a h1 em { font-style:italic; color:#2F4A3A; }
+  .a .lead { font-size:15px; line-height:1.55; max-width:420px; opacity:.85; margin-bottom:22px; }
+  .a .cta { display:inline-flex; gap:10px; }
+  .a .cta .p { background:#2F4A3A; color:#F6F2EA; padding:13px 22px; border-radius:999px; font-weight:600; font-size:14px; }
+  .a .cta .s { padding:13px 18px; font-size:14px; border-bottom:1px solid #9A6A3F; border-radius:0; }
+  .a .facts { position:absolute; left:0; right:0; bottom:0; display:grid; grid-template-columns:repeat(4,1fr); background:rgba(246,242,234,.86); backdrop-filter:blur(6px); border-top:1px solid rgba(35,38,42,.12); }
+  .a .facts div { padding:16px 4%; border-right:1px solid rgba(35,38,42,.1); font-size:12px; line-height:1.35; }
+  .a .facts b { display:block; font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:500; color:#2F4A3A; line-height:1; margin-bottom:4px; }
+
+  /* ---------- B: Хвоя на рассвете ---------- */
+  .b { background:#17211C; color:#EEE8DC; font-family:'Onest',sans-serif; }
+  .b .sky { position:absolute; inset:0; background:
+      radial-gradient(60% 55% at 72% 62%, rgba(214,146,92,.55) 0%, rgba(214,146,92,0) 70%),
+      linear-gradient(180deg,#1B2621 0%,#25352C 50%,#3C4A3C 72%,#5A5A45 100%); }
+  .b .shade { position:absolute; inset:0; background:linear-gradient(90deg, rgba(23,33,28,.92) 0%, rgba(23,33,28,.55) 45%, rgba(23,33,28,0) 70%); }
+  .b nav { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; padding:2.2% 4%; font-size:13px; }
+  .b nav b { font-family:'Unbounded',sans-serif; font-weight:500; font-size:17px; letter-spacing:.08em; text-transform:uppercase; }
+  .b nav .links { display:flex; gap:26px; opacity:.7; }
+  .b nav .btn { background:#B87333; color:#17211C; padding:9px 16px; border-radius:6px; font-weight:600; }
+  .b .copy { position:absolute; left:4%; bottom:14%; width:54%; }
+  .b h1 { font-family:'Unbounded',sans-serif; font-weight:500; font-size:clamp(28px,4.2vw,58px); line-height:1.02; margin:0 0 18px; letter-spacing:-.02em; text-transform:none; }
+  .b h1 span { color:#D69A63; }
+  .b .lead { font-size:15px; line-height:1.55; max-width:430px; opacity:.78; margin-bottom:22px; }
+  .b .cta { display:inline-flex; gap:12px; }
+  .b .cta .p { background:#B87333; color:#17211C; padding:14px 22px; border-radius:6px; font-weight:600; font-size:14px; }
+  .b .cta .s { padding:14px 20px; font-size:14px; border:1px solid rgba(238,232,220,.35); border-radius:6px; }
+  .b .side { position:absolute; right:4%; top:22%; display:flex; flex-direction:column; gap:14px; text-align:right; font-size:12px; opacity:.85; }
+  .b .side b { display:block; font-family:'Unbounded',sans-serif; font-weight:400; font-size:26px; color:#EEE8DC; }
+  .b .side div { border-right:2px solid #B87333; padding-right:12px; }
+
+  /* ---------- C: Береста ---------- */
+  .c { background:#F4EFE6; color:#26282B; font-family:'Manrope',sans-serif; }
+  .c .bark { position:absolute; inset:0; background-image:
+      linear-gradient(90deg, transparent 0 7%, #26282B 7% 9.5%, transparent 9.5% 100%),
+      linear-gradient(90deg, transparent 0 40%, #26282B 40% 41.2%, transparent 41.2% 100%),
+      linear-gradient(90deg, transparent 0 63%, #26282B 63% 66%, transparent 66% 100%),
+      linear-gradient(90deg, transparent 0 82%, #26282B 82% 83%, transparent 83% 100%);
+      background-size:100% 3px; background-repeat:no-repeat;
+      background-position: 0 13%, 0 31%, 0 58%, 0 79%; opacity:.9; }
+  .c nav { position:absolute; top:0; left:0; right:0; display:flex; justify-content:space-between; align-items:center; padding:2.2% 3%; font-size:13px; font-weight:500; }
+  .c nav b { font-weight:800; font-size:19px; letter-spacing:-.02em; }
+  .c nav b i { display:inline-block; width:18px; height:4px; background:#26282B; margin-right:8px; vertical-align:middle; border-radius:2px; }
+  .c nav .links { display:flex; gap:24px; opacity:.75; }
+  .c nav .btn { background:#26282B; color:#F4EFE6; padding:9px 16px; border-radius:10px; }
+  .c .grid { position:absolute; left:3%; right:3%; top:14%; bottom:5%; display:grid; grid-template-columns:1.15fr 1fr; grid-template-rows:1fr auto; gap:12px; }
+  .c .hero-txt { background:#FBF8F2; border-radius:20px; padding:6% 7%; display:flex; flex-direction:column; justify-content:space-between; border:1px solid rgba(38,40,43,.08); position:relative; overflow:hidden; }
+  .c .hero-txt .tag { font-size:12px; font-weight:600; color:#2E4A3B; background:#E3E8DA; padding:6px 10px; border-radius:999px; align-self:flex-start; }
+  .c h1 { font-weight:800; font-size:clamp(28px,4.3vw,60px); line-height:.98; letter-spacing:-.045em; margin:14px 0 14px; }
+  .c h1 span { color:#2E4A3B; }
+  .c .lead { font-size:14px; line-height:1.55; opacity:.8; max-width:400px; margin-bottom:16px; }
+  .c .cta { display:flex; gap:10px; }
+  .c .cta .p { background:#2E4A3B; color:#F4EFE6; padding:13px 20px; border-radius:12px; font-weight:700; font-size:14px; }
+  .c .cta .s { background:#EAE3D6; padding:13px 18px; border-radius:12px; font-weight:600; font-size:14px; }
+  .c .photo { border-radius:20px; position:relative; overflow:hidden; background:
+      radial-gradient(80% 60% at 60% 20%, #F7EBD6 0%, rgba(247,235,214,0) 60%),
+      linear-gradient(180deg,#E3DDCF 0%,#CFD3C3 50%,#8E9F88 78%,#5F7461 100%); }
+  .c .photo .chip { position:absolute; left:14px; bottom:14px; background:rgba(251,248,242,.92); padding:8px 12px; border-radius:10px; font-size:12px; font-weight:600; }
+  .c .nums { grid-column:1 / -1; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+  .c .nums div { background:#FBF8F2; border-radius:16px; padding:14px 16px; font-size:12px; line-height:1.35; border:1px solid rgba(38,40,43,.08); }
+  .c .nums b { display:block; font-weight:800; font-size:28px; letter-spacing:-.04em; line-height:1; margin-bottom:4px; }
+  .c .nums b small { font-size:14px; font-weight:700; letter-spacing:0; }
+  .c .nums div:nth-child(2) { background:#2E4A3B; color:#F4EFE6; }
+  .c .nums div:nth-child(4) { background:#B9773F; color:#FBF8F2; }
+</style>
+
+<h2>Три визуальных направления для «Бересты»</h2>
+<p class="subtitle">Первый экран + полоса фактов. Фото пока заглушки из градиентов, на их месте будут кадры, сгенерированные Codex. Кликни на понравившееся (можно на несколько) и напиши в чате, что взять, а что убрать.</p>
+
+<!-- reusable SVGs -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="pines">
+      <path d="M0 300 L0 210 L18 170 L10 172 L26 130 L18 132 L34 92 L50 132 L42 130 L58 172 L50 170 L68 210 L68 300Z"/>
+      <path d="M60 300 L60 200 L80 150 L72 152 L90 104 L82 106 L100 60 L118 106 L110 104 L128 152 L120 150 L140 200 L140 300Z"/>
+      <path d="M130 300 L130 220 L146 186 L139 188 L153 150 L146 152 L160 118 L174 152 L167 150 L181 188 L174 186 L190 220 L190 300Z"/>
+      <path d="M840 300 L840 196 L860 150 L852 152 L870 104 L862 106 L880 58 L898 106 L890 104 L908 152 L900 150 L920 196 L920 300Z"/>
+      <path d="M905 300 L905 214 L922 176 L915 178 L930 138 L923 140 L938 100 L953 140 L946 138 L961 178 L954 176 L971 214 L971 300Z"/>
+      <path d="M960 300 L960 190 L982 140 L973 142 L993 90 L984 92 L1004 40 L1024 92 L1015 90 L1035 142 L1026 140 L1048 190 L1048 300Z"/>
+    </g>
+    <g id="towers">
+      <!-- 9 / 12 / 14 floors -->
+      <rect x="0" y="125" width="120" height="135" rx="2"/>
+      <rect x="135" y="80" width="120" height="180" rx="2"/>
+      <rect x="270" y="50" width="130" height="210" rx="2"/>
+    </g>
+    <pattern id="win" width="15" height="15" patternUnits="userSpaceOnUse">
+      <rect x="3" y="4" width="9" height="8" fill="currentColor"/>
+    </pattern>
+  </defs>
+</svg>
+
+<div class="options" data-multiselect>
+
+  <!-- A -->
+  <div class="dir">
+    <div class="option" data-choice="a-tuman" onclick="toggleSelect(this)">
+      <div class="frame a">
+        <div class="sky"></div>
+        <svg viewBox="0 0 1100 300" preserveAspectRatio="xMidYMax slice" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:62%;">
+          <g transform="translate(560,40)" style="color:#C9C3B4">
+            <use href="#towers" fill="#E7E1D4"/>
+            <g fill="url(#win)" opacity=".55"><rect x="8" y="135" width="104" height="120"/><rect x="143" y="90" width="104" height="165"/><rect x="278" y="60" width="114" height="195"/></g>
+          </g>
+          <g fill="#7E8C7C" opacity=".55" transform="translate(0,10)"><use href="#pines"/></g>
+          <g fill="#4E5F51" opacity=".85" transform="translate(-40,40) scale(1.08)"><use href="#pines"/></g>
+        </svg>
+        <div class="fog"></div>
+        <nav><b>Береста</b><div class="links"><span>О комплексе</span><span>Квартиры</span><span>Покупка</span><span>Застройщик</span></div><span class="btn">Подобрать квартиру</span></nav>
+        <div class="copy">
+          <div class="eyebrow">Казань · Сосновая, 12 · сдача с IV кв. 2026</div>
+          <h1>Город за спиной,<br><em>лес за окном</em></h1>
+          <div class="lead">Три дома у соснового бора и реки. Двор без машин, школа в пяти минутах, до центра пятнадцать.</div>
+          <div class="cta"><span class="p">Подобрать квартиру</span><span class="s">Смотреть планировки</span></div>
+        </div>
+        <div class="facts">
+          <div><b>200 м</b>до соснового бора</div>
+          <div><b>15 мин</b>до центра на машине</div>
+          <div><b>9 мин</b>пешком до метро</div>
+          <div><b>от 6,6 млн</b>студии, семейная ипотека 6%</div>
+        </div>
+      </div>
+      <div class="meta"><h3>A. Утренний туман</h3><p>Журнальная вёрстка: тёплый белый, антиква с курсивом, много воздуха, тонкие медные линии. Фото во весь экран, туман над рекой.</p></div>
+      <div class="swatches"><i style="background:#F6F2EA"></i><i style="background:#23262A"></i><i style="background:#2F4A3A"></i><i style="background:#9A6A3F"></i><span>Cormorant Garamond + Manrope · спокойно, «дорогая тишина»</span></div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="dir">
+    <div class="option" data-choice="b-hvoya" onclick="toggleSelect(this)">
+      <div class="frame b">
+        <div class="sky"></div>
+        <svg viewBox="0 0 1100 300" preserveAspectRatio="xMidYMax slice" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:70%;">
+          <g transform="translate(600,30)" style="color:#E9A86B">
+            <use href="#towers" fill="#2B3A31"/>
+            <g fill="url(#win)" opacity=".8"><rect x="8" y="135" width="104" height="120"/><rect x="143" y="90" width="104" height="165"/><rect x="278" y="60" width="114" height="195"/></g>
+          </g>
+          <g fill="#121A16" transform="translate(-20,30) scale(1.05)"><use href="#pines"/></g>
+        </svg>
+        <div class="shade"></div>
+        <nav><b>Береста</b><div class="links"><span>Комплекс</span><span>Квартиры</span><span>Ипотека</span><span>Контакты</span></div><span class="btn">Подбор</span></nav>
+        <div class="side">
+          <div><b>200 м</b>до бора</div>
+          <div><b>350 м</b>до набережной</div>
+          <div><b>95%</b>готовность корпуса 1</div>
+        </div>
+        <div class="copy">
+          <h1>Город за спиной,<br><span>лес за окном</span></h1>
+          <div class="lead">ЖК «Береста» в 15 минутах от центра Казани. Утром выходите к соснам и реке, вечером возвращаетесь во двор без машин.</div>
+          <div class="cta"><span class="p">Подобрать квартиру</span><span class="s">Планировки и цены</span></div>
+        </div>
+      </div>
+      <div class="meta"><h3>B. Хвоя на рассвете</h3><p>Кинематографично: тёмно-зелёный и графит, медный свет окон, крупный гротеск. Сильный первый экран, ощущение кадра из фильма.</p></div>
+      <div class="swatches"><i style="background:#17211C"></i><i style="background:#2B3A31"></i><i style="background:#B87333"></i><i style="background:#EEE8DC"></i><span>Unbounded + Onest · атмосферно, вечер и рассвет</span></div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="dir">
+    <div class="option" data-choice="c-beresta" onclick="toggleSelect(this)">
+      <div class="frame c">
+        <div class="bark"></div>
+        <nav><b><i></i>береста</b><div class="links"><span>Район</span><span>Двор</span><span>Квартиры</span><span>Как купить</span></div><span class="btn">8 800 000-16-16</span></nav>
+        <div class="grid">
+          <div class="hero-txt">
+            <span class="tag">Корпус 3 · старт продаж, лучшие цены</span>
+            <div>
+              <h1>Город за спиной, <span>лес за окном</span></h1>
+              <div class="lead">Три дома между сосновым бором и рекой. 15 минут до центра Казани, двор, где детей можно отпустить гулять одних.</div>
+              <div class="cta"><span class="p">Подобрать 3–5 вариантов</span><span class="s">Планировки</span></div>
+            </div>
+          </div>
+          <div class="photo">
+            <svg viewBox="0 0 1100 300" preserveAspectRatio="xMidYMax slice" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:72%;">
+              <g transform="translate(340,30)" style="color:#B5AE9E">
+                <use href="#towers" fill="#ECE6DA"/>
+                <g fill="url(#win)" opacity=".7"><rect x="8" y="135" width="104" height="120"/><rect x="143" y="90" width="104" height="165"/><rect x="278" y="60" width="114" height="195"/></g>
+              </g>
+              <g fill="#3F5444" transform="translate(-60,40) scale(1.1)"><use href="#pines"/></g>
+            </svg>
+            <span class="chip">Двор без машин · паркинг под землёй</span>
+          </div>
+          <div class="nums">
+            <div><b>200 <small>м</small></b>до соснового бора</div>
+            <div><b>15 <small>мин</small></b>до центра на машине</div>
+            <div><b>14</b>сданных домов у застройщика</div>
+            <div><b>6%</b>семейная и IT-ипотека</div>
+          </div>
+        </div>
+      </div>
+      <div class="meta"><h3>C. Береста</h3><p>Фирменный приём от названия: тёмные «чёрточки» бересты как графика. Модульная сетка карточек, крупные цифры, жирный гротеск. Тепло, по-семейному, факты на первом плане.</p></div>
+      <div class="swatches"><i style="background:#F4EFE6"></i><i style="background:#26282B"></i><i style="background:#2E4A3B"></i><i style="background:#B9773F"></i><span>Manrope ExtraBold · дружелюбно, «цифры вместо эпитетов»</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="section">
+  <p class="label">Моя рекомендация</p>
+  <p><b>C «Береста»</b> с фотографией во всю ширину из A. У C свой узнаваемый приём, который не спутать с другими ЖК, и сетка карточек хорошо держит цифры из брифа. Из A я бы взял светлый туманный кадр и спокойный воздух. B самое эффектное, но тёмный сайт хуже продаёт семьям с детьми и тяжелее читается на телефоне.</p>
+</div>
