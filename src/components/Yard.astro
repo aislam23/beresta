@@ -1,0 +1,38 @@
+---
+import Section from './Section.astro';
+import Photo from './Photo.astro';
+import YardIcon from './YardIcon.astro';
+import { yardFeatures, groundFloor } from '../data/yard';
+---
+<Section id="yard" title="Двор, куда детей можно<br>отпустить гулять одних" lead="Въезд во двор закрыт, все машины уезжают в подземный паркинг.">
+  <div class="yard">
+    <Photo class="yard-photo" shot="02-yard" tone="green" alt="Двор между корпусами без машин, дети на площадке, за домами сосны" placeholder="Кадр 02 · двор без машин между корпусами, дети на площадке, сосны за домами" sizes="(max-width: 980px) 100vw, 680px" />
+    <ul class="yard-list">
+      {yardFeatures.map((f) => (
+        <li class="feat"><div class="ico"><YardIcon name={f.icon} /></div><div><h3>{f.title}</h3><p>{f.text}</p></div></li>
+      ))}
+    </ul>
+    <ul class="yard-strip">
+      {groundFloor.map((s) => <li class="shop">{s} <small>1 этаж</small></li>)}
+    </ul>
+  </div>
+</Section>
+<style>
+  .yard { display: grid; grid-template-columns: repeat(12, 1fr); gap: 12px; }
+  .yard :global(.yard-photo) { grid-column: span 7; min-height: 460px; }
+  .yard-list { grid-column: span 5; display: grid; gap: 12px; list-style: none; margin: 0; padding: 0; }
+  .feat { background: var(--card); border-radius: 16px; padding: 18px 20px; border: 1px solid var(--line); display: grid; grid-template-columns: 44px 1fr; gap: 14px; align-items: start; }
+  .ico { width: 44px; height: 44px; border-radius: 12px; background: var(--pine-2); display: grid; place-items: center; color: var(--pine); }
+  .feat h3 { font-size: 16px; margin-bottom: 2px; }
+  .feat p { font-size: 14px; color: var(--ink-2); line-height: 1.45; }
+  .yard-strip { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; list-style: none; margin: 0; padding: 0; }
+  .shop { background: var(--copper-2); border-radius: 16px; padding: 16px 18px; font-weight: 700; font-size: 15px; display: flex; justify-content: space-between; align-items: center; }
+  .shop small { font-weight: 500; color: var(--ink-2); font-size: 13px; }
+  @media (max-width: 980px) {
+    .yard-strip { grid-template-columns: 1fr 1fr; }
+    .yard :global(.yard-photo), .yard-list { grid-column: 1 / -1; }
+  }
+  @media (max-width: 640px) {
+    .yard-strip { grid-template-columns: 1fr; }
+  }
+</style>

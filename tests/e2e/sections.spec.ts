@@ -44,3 +44,13 @@ test('район', async ({ page }) => {
   await expect(s.locator('.dist-row')).toHaveCount(5);
   await expect(s.getByRole('img', { name: 'Схема района: бор, набережная, метро, школа и ТЦ вокруг комплекса' })).toBeVisible();
 });
+
+test('двор', async ({ page }) => {
+  const s = page.locator('#yard');
+  expect(await textOf(s.locator('h2'))).toBe(copy.yard.h2);
+  expect(await textOf(s.locator('.lead'))).toBe(copy.yard.lead);
+  await expect(s.locator('.feat h3')).toHaveText(['Подземный паркинг на 320 мест', 'Площадки для всех возрастов', 'Лобби с консьержем', 'Кладовки от 4 м²']);
+  // toHaveText нормализует пробелы через \s+, а \s включает NBSP, поэтому «4 м²» совпадает с «4\u00a0м²»
+  await expect(s.locator('.feat svg[aria-hidden="true"]')).toHaveCount(4);
+  await expect(s.locator('.shop')).toHaveCount(4);
+});
