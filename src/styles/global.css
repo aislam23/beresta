@@ -32,6 +32,6 @@ html { scroll-padding-top: var(--hdr-h); }
 .lead-form input[aria-invalid="true"] { border-color: var(--f-err); }
 .lead-form .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .lead-form .agree { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; font-size: 13px; color: var(--f-label); }
-.lead-form .agree input { width: 18px; height: 18px; margin: 1px 0 0; padding: 0; border-radius: 4px; accent-color: var(--copper-strong); flex: none; }
+.lead-form .agree input { width: 18px; height: 18px; margin: 1px 0 0; padding: 0; border-radius: 4px; accent-color: var(--copper-strong); flex: none; scroll-margin-bottom: 140px; /* под чекбоксом строка ошибки, ей тоже нужно место над нижней плашкой */ }
 .lead-form .err { margin: 0; font-size: 13px; font-weight: 600; color: var(--f-err); }
 @media (max-width: 640px) { .lead-form .row2 { grid-template-columns: 1fr; } }
