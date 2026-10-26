@@ -111,3 +111,17 @@ test('застройщик', async ({ page }) => {
   await expect(s.locator('.num')).toHaveCount(4);
   await expect(s.locator('.flow li')).toHaveCount(3);
 });
+
+test('частые вопросы', async ({ page }) => {
+  const s = page.locator('#faq');
+  expect(await textOf(s.locator('h2'))).toBe(copy.faq.h2);
+  await expect(s.locator('details')).toHaveCount(5);
+  await expect(s.locator('summary')).toHaveText(copy.faq.items.map(([q]) => q));
+  for (const d of await s.locator('details').all()) await d.evaluate((el) => ((el as HTMLDetailsElement).open = true));
+  await expect(s.locator('details p')).toHaveText(copy.faq.items.map(([, a]) => a));
+  await page.reload();
+  await expect(s.locator('details').first()).toHaveAttribute('open', '');
+  const second = s.locator('details').nth(1);
+  await second.locator('summary').click();
+  await expect(second.locator('p')).toBeVisible();
+});
