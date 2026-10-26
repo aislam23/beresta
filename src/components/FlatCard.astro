@@ -1,0 +1,32 @@
+---
+import FloorPlan from './FloorPlan.astro';
+import { bookingLabel, type Flat } from '../data/flats';
+interface Props { flat: Flat }
+const { flat } = Astro.props;
+---
+<article class:list={['flat', { pent: flat.dark }]}>
+  <div class="plan"><FloorPlan type={flat.id} dark={flat.dark} /></div>
+  <div class="top"><h3>{flat.title}</h3><span class="area-m">{flat.area}</span></div>
+  <div class="price"><small>от</small> {flat.priceFrom} <small>млн&nbsp;₽</small></div>
+  <p class="fx">{flat.feature}</p>
+  <div class="acts">
+    <button type="button" class="btn btn-c" data-book={bookingLabel(flat)} data-flat={flat.id} aria-haspopup="dialog">Забронировать</button>
+    <a class="btn btn-s" href="#pick">Подобрать</a>
+  </div>
+</article>
+<style>
+  .flat { background: var(--card); border-radius: var(--r); border: 1px solid var(--line); padding: 22px; display: flex; flex-direction: column; gap: 14px; }
+  /* высота по пропорциям схемы, а не 180px из прототипа: так подписи помещений крупнее */
+  .flat .plan { border-radius: 14px; background: #F0EADF; padding: 12px; }
+  .flat .top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .flat .area-m { font-size: 14px; color: var(--ink-2); font-weight: 600; white-space: nowrap; }
+  .flat .price { font-size: 30px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+  .flat .price small { font-size: 15px; font-weight: 600; color: var(--ink-2); letter-spacing: 0; }
+  .flat .fx { font-size: 14px; color: var(--ink-2); }
+  .flat .acts { display: flex; gap: 8px; margin-top: auto; }
+  .flat .acts .btn { flex: 1; padding: 14px 12px; font-size: 14px; }
+  .flat.pent { background: var(--ink); color: var(--paper); border-color: transparent; }
+  .flat.pent .plan { background: #34373B; }
+  .flat.pent .area-m, .flat.pent .fx, .flat.pent .price small { color: #B9BCBF; }
+  .flat.pent .btn-s { background: #3A3D41; color: var(--paper); }
+</style>

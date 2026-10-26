@@ -68,3 +68,14 @@ test('для кого', async ({ page }) => {
   await expect(s.locator('.who-c h3')).toHaveText(copy.who.cards);
   await expect(s.locator('.fit')).toHaveCount(4);
 });
+
+test('квартиры', async ({ page }) => {
+  const s = page.locator('#flats');
+  expect(await textOf(s.locator('h2'))).toBe(copy.flats.h2);
+  expect(await textOf(s.locator('.head .lead'))).toBe(copy.flats.lead);
+  await expect(s.locator('.flat h3, .flat-help h3')).toHaveText(copy.flats.cards);
+  await expect(s.locator('.flat svg[role="img"]')).toHaveCount(5);
+  await expect(s.locator('button[data-book]')).toHaveCount(5);
+  await expect(s.locator('button[data-book][data-flat="penthouse"]')).toHaveAttribute('data-book', 'Пентхаус · от 33 млн ₽');
+  expect(await textOf(s.locator('.flat-help p'))).toBe(copy.flats.helpText);
+});
