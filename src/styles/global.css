@@ -11,3 +11,21 @@
 .skip:focus { top: 12px; }
 
 main { scroll-margin-top: var(--hdr-h); }
+
+/* Поля заявок: форма подбора (тёмный фон) и окно брони (.light) */
+.lead-form { display: grid; gap: 12px; align-content: start;
+  --f-label: #C9D4C4; --f-bg: rgba(255,255,255,.08); --f-bg-focus: rgba(255,255,255,.12);
+  --f-border: rgba(255,255,255,.16); --f-text: var(--paper); --f-ph: #93A595; --f-err: #F6C9A0; }
+.lead-form.light { --f-label: var(--ink-2); --f-bg: #fff; --f-bg-focus: #fff; --f-border: var(--line); --f-text: var(--ink); --f-ph: #8A8D91; --f-err: #A23B1F; }
+.lead-form .field { display: grid; gap: 6px; font-size: 13px; font-weight: 600; color: var(--f-label); }
+/* без outline: none из прототипа: обводка :focus-visible нужна для клавиатуры */
+.lead-form input, .lead-form select { font: 500 16px var(--font); padding: 15px 16px; border-radius: 12px; border: 1px solid var(--f-border); background: var(--f-bg); color: var(--f-text); }
+.lead-form input::placeholder { color: var(--f-ph); }
+.lead-form select option { color: var(--ink); }
+.lead-form input:focus, .lead-form select:focus { border-color: var(--copper); background: var(--f-bg-focus); }
+.lead-form input[aria-invalid="true"] { border-color: var(--f-err); }
+.lead-form .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.lead-form .agree { display: flex; gap: 10px; align-items: flex-start; font-weight: 500; font-size: 13px; color: var(--f-label); }
+.lead-form .agree input { width: 18px; height: 18px; margin: 1px 0 0; padding: 0; border-radius: 4px; accent-color: var(--copper-strong); flex: none; }
+.lead-form .err { margin: 0; font-size: 13px; font-weight: 600; color: var(--f-err); }
+@media (max-width: 640px) { .lead-form .row2 { grid-template-columns: 1fr; } }
