@@ -24,3 +24,27 @@ test('ссылка «Перейти к содержимому» ведёт в ma
   await expect(skip).toBeFocused();
   await expect(skip).toHaveAttribute('href', '#main');
 });
+
+test('все секции на месте и якоря шапки ведут к ним', async ({ page }) => {
+  for (const id of ['hero', 'area', 'yard', 'who', 'flats', 'houses', 'buy', 'dev', 'faq', 'pick']) {
+    await expect(page.locator(`section#${id}`)).toHaveCount(1);
+  }
+  const hrefs = await page.locator('header nav a').evaluateAll((as) => as.map((a) => a.getAttribute('href')));
+  for (const href of hrefs) await expect(page.locator(href!)).toHaveCount(1);
+});
+
+test('нет плашек над заголовками и длинных тире', async ({ page }) => {
+  await expect(page.locator('.eyebrow, .tag, .pill')).toHaveCount(0);
+  const text = await page.locator('body').innerText();
+  expect(text).not.toContain('—');
+});
+
+test('у всех картинок есть alt', async ({ page }) => {
+  const alts = await page.locator('img').evaluateAll((imgs) => imgs.map((i) => i.getAttribute('alt')));
+  for (const alt of alts) expect(alt?.trim()).toBeTruthy();
+});
+
+test('нет горизонтального скролла', async ({ page }) => {
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
