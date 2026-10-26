@@ -78,4 +78,21 @@ test('квартиры', async ({ page }) => {
   await expect(s.locator('button[data-book]')).toHaveCount(5);
   await expect(s.locator('button[data-book][data-flat="penthouse"]')).toHaveAttribute('data-book', 'Пентхаус · от 33 млн ₽');
   expect(await textOf(s.locator('.flat-help p'))).toBe(copy.flats.helpText);
+  const labels = await s.locator('.flat svg[role="img"]').evaluateAll((els) => els.map((e) => (e.getAttribute('aria-label') ?? '').replace(/\u00a0/g, ' ')));
+  expect(labels).toEqual([
+    'Схема студии: комната с кухней-нишей, ванная, французский балкон',
+    'Схема однокомнатной: кухня-гостиная 16 м², спальня, ванная',
+    'Схема двухкомнатной: кухня-гостиная, мастер-спальня с гардеробной, детская, ванная',
+    'Схема трёхкомнатной: кухня-гостиная, три комнаты, две ванные, окна на две стороны',
+    'Схема пентхауса: гостиная, три спальни, две ванные, терраса 40 м²',
+  ]);
+  for (const b of await s.locator('button[data-book]').all()) await expect(b).toHaveAttribute('aria-haspopup', 'dialog');
+});
+
+test('сроки', async ({ page }) => {
+  const s = page.locator('#houses');
+  expect(await textOf(s.locator('h2'))).toBe(copy.houses.h2);
+  expect(await textOf(s.locator('.lead'))).toBe(copy.houses.lead);
+  await expect(s.locator('.house .when')).toHaveText(['IV кв. 2026', 'II кв. 2027', 'IV кв. 2027']);
+  await expect(s.getByRole('progressbar', { name: 'Готовность корпуса 1' })).toHaveAttribute('aria-valuenow', '95');
 });
