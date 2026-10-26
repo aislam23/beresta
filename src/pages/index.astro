@@ -1,9 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import MobileBar from '../components/MobileBar.astro';
 ---
 <Base>
+  <Header />
   <main id="main">
-    <!-- секции добавляются задачами 7–19 в этом порядке:
-         Hero, Area, BarkDivider, Yard, Audiences, Flats, Houses, BarkDivider, Buy, Developer, Faq, PickForm -->
+    <!-- секции: Hero, Area, BarkDivider, Yard, Audiences, Flats, Houses, BarkDivider, Buy, Developer, Faq, PickForm -->
   </main>
+  <Footer />
+  <MobileBar />
 </Base>
