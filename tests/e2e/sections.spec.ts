@@ -95,12 +95,23 @@ test('сроки', async ({ page }) => {
   expect(await textOf(s.locator('.lead'))).toBe(copy.houses.lead);
   await expect(s.locator('.house .when')).toHaveText(['IV кв. 2026', 'II кв. 2027', 'IV кв. 2027']);
   await expect(s.getByRole('progressbar', { name: 'Готовность корпуса 1' })).toHaveAttribute('aria-valuenow', '95');
+  await expect(s.locator('.house .st')).toHaveText(['Готовность 95%. Идёт благоустройство двора.', 'Отделывают фасад.', 'Старт продаж по начальным ценам. Пентхаусы есть только в этом доме.']);
+  await expect(s.locator('.house').nth(1).locator('.steps i.on')).toHaveCount(3);
+  await expect(s.locator('.house').nth(2).locator('.steps i.on')).toHaveCount(1);
 });
 
 test('как купить', async ({ page }) => {
   const s = page.locator('#buy');
   expect(await textOf(s.locator('h2'))).toBe(copy.buy.h2);
   await expect(s.locator('.buy-c h3')).toHaveText(['Семейная ипотека', 'IT-ипотека', 'Рассрочка до сдачи дома', 'Рыночная ипотека', 'Trade-in', 'Бронь онлайн']);
+  await expect(s.locator('.buy-c p')).toHaveText([
+    'Для семей с детьми.',
+    'Для сотрудников аккредитованных IT-компаний.',
+    'Первый взнос от 30%, остаток выплачиваете до сдачи дома без процентов.',
+    'В банках-партнёрах застройщика.',
+    'Старую квартиру зачтём в стоимость новой. Продавать её заранее самому не придётся.',
+    '15 000 ₽ на 7 дней. За это время можно спокойно оформить ипотеку.',
+  ]);
   await expect(s.getByRole('link', { name: 'Выбрать квартиру' })).toHaveAttribute('href', '#flats');
 });
 
@@ -110,6 +121,12 @@ test('застройщик', async ({ page }) => {
   expect(await textOf(s.locator('.escrow h3'))).toBe(copy.dev.escrow);
   await expect(s.locator('.num')).toHaveCount(4);
   await expect(s.locator('.flow li')).toHaveCount(3);
+  await expect(s.locator('.flow')).toMatchAriaSnapshot(`
+    - list:
+      - listitem: Вы оплачиваете квартиру
+      - listitem: Банк хранит деньги на эскроу
+      - listitem: Дом сдан банк переводит деньги застройщику
+  `);
 });
 
 test('частые вопросы', async ({ page }) => {
@@ -117,6 +134,8 @@ test('частые вопросы', async ({ page }) => {
   expect(await textOf(s.locator('h2'))).toBe(copy.faq.h2);
   await expect(s.locator('details')).toHaveCount(5);
   await expect(s.locator('summary')).toHaveText(copy.faq.items.map(([q]) => q));
+  // «+» из ::after не должен попадать в доступное имя
+  expect(await s.ariaSnapshot()).not.toContain('+');
   for (const d of await s.locator('details').all()) await d.evaluate((el) => ((el as HTMLDetailsElement).open = true));
   await expect(s.locator('details p')).toHaveText(copy.faq.items.map(([, a]) => a));
   await page.reload();

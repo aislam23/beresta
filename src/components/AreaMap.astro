@@ -1,6 +1,6 @@
 <div class="map">
     <svg viewBox="0 0 600 520" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Схема района: бор, набережная, метро, школа и ТЦ вокруг комплекса">
-      <rect width="600" height="520" fill="var(--map-bg)"/>
+      <rect class="bg" width="600" height="520"/>
       <path d="M0 360 C120 330 200 420 320 400 S520 330 600 350 L600 520 L0 520Z" fill="#CFDCD8"/>
       <path d="M0 372 C120 342 200 432 320 412 S520 342 600 362" fill="none" stroke="#B9773F" stroke-width="3" stroke-dasharray="8 6"/>
       <ellipse cx="150" cy="170" rx="170" ry="120" fill="#C9D6BF"/>
@@ -25,6 +25,7 @@
 <style>
   .map { --map-bg: #F3EEE4; background: var(--map-bg); border-radius: var(--r); border: 1px solid var(--line); position: relative; aspect-ratio: 600 / 520; align-self: start; overflow: hidden; }
   .map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .map .bg { fill: var(--map-bg); }
   .map text { font-family: var(--font); }
   /* карта всегда держит пропорции viewBox, чтобы подписи не обрезались и сверху не было пустой полосы */
   @media (max-width: 640px) {

@@ -22,6 +22,8 @@ import { buyOptions } from '../data/buy';
   .buy-c.acc { background: var(--copper-strong); color: #fff; border-color: transparent; }
   .buy-c.acc p { color: #fff; }
   .buy-c.acc .btn { margin-top: auto; background: #fff; color: var(--ink); align-self: flex-start; }
+  /* на меди обводка фокуса белая, иначе она сливается с фоном */
+  .buy-c.acc :focus-visible { outline-color: #fff; }
   @media (max-width: 980px) {
     .buy { grid-template-columns: 1fr 1fr; }
   }

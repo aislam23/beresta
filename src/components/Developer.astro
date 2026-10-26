@@ -11,7 +11,7 @@ import { developerNums, escrow } from '../data/developer';
     <div class="escrow">
       <h3>{escrow.title}</h3>
       <p>{escrow.text}</p>
-      <ol class="flow">
+      <ol class="flow" role="list">
         {escrow.flow.map((f) => <li><b>{f.title}</b>{f.text}</li>)}
       </ol>
     </div>
@@ -27,15 +27,15 @@ import { developerNums, escrow } from '../data/developer';
   .flow { list-style: none; margin: auto 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: stretch; }
   .flow li { background: #34373B; border-radius: 12px; padding: 14px; font-size: 13px; line-height: 1.35; }
   .flow li b { display: block; font-size: 15px; color: #fff; }
-  /* стрелки рисует CSS, в дереве доступности их нет */
+  /* стрелки рисует CSS; пустой alt-текст убирает их из доступного имени */
   .flow li + li { position: relative; }
-  .flow li + li::before { content: '→'; position: absolute; left: -14px; top: 50%; transform: translate(-50%, -50%); color: var(--copper); font-weight: 800; font-size: 16px; }
+  .flow li + li::before { content: '→'; content: '→' / ''; position: absolute; left: -14px; top: 50%; transform: translate(-50%, -50%); color: var(--copper); font-weight: 800; font-size: 16px; }
   @media (max-width: 980px) {
     .dev { grid-template-columns: 1fr; }
   }
   @media (max-width: 640px) {
     .dev-nums { grid-template-columns: 1fr; }
-    .flow { grid-template-columns: 1fr; gap: 28px; }
+    .flow { grid-template-columns: 1fr; }
     .flow li + li::before { left: 50%; top: -14px; transform: translate(-50%, -50%) rotate(90deg); }
   }
 </style>

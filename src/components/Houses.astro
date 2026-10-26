@@ -2,11 +2,11 @@
 import Section from './Section.astro';
 import { houses } from '../data/houses';
 ---
-<Section id="houses" title="Первый дом сдаём<br>в этом квартале" lead="Корпус 1 готов на&nbsp;95%. В&nbsp;корпусе 3 только начались продажи.">
+<Section id="houses" title="Первый дом сдаём<br>в этом квартале" lead="Корпус&nbsp;1 готов на&nbsp;95%. В&nbsp;корпусе&nbsp;3 только начались продажи.">
   <div class="houses">
     {houses.map((h) => (
       <article class:list={['house', { now: h.readiness !== undefined }]}>
-        <div class="n"><b>Корпус {h.n}</b><span>{h.floors} этажей · {h.units} квартир</span></div>
+        <div class="n"><b>Корпус&nbsp;{h.n}</b><span>{h.floors}&nbsp;этажей · {h.units}&nbsp;квартир</span></div>
         <div class="when">{h.due}</div>
         {h.readiness !== undefined ? (
           <div class="bar" role="progressbar" aria-label={`Готовность корпуса ${h.n}`} aria-valuemin="0" aria-valuemax="100" aria-valuenow={h.readiness}><i style={`width:${h.readiness}%`}></i></div>
