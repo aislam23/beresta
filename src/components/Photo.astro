@@ -19,7 +19,7 @@ const img = getShot(shot);
 ---
 <div class:list={['photo', `tone-${tone}`, cls]} data-shot={img ? undefined : placeholder} style={`--focus: ${focus[shot]}`}>
   {img ? (
-    <Picture src={img} alt={alt} widths={[640, 960, 1280, 1536]} sizes={sizes} formats={['avif', 'webp']} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} />
+    <Picture src={img} alt={alt} widths={[640, 960, 1280, 1536]} sizes={sizes} formats={['avif', 'webp']} fallbackFormat="jpg" loading={eager ? 'eager' : 'lazy'} {...(eager ? { fetchpriority: 'high' } : {})} />
   ) : (
     <div class="ph" role="img" aria-label={alt}>{scene && <PlaceholderScene uid={`ph-${shot}`} />}</div>
   )}
