@@ -103,3 +103,11 @@ test('как купить', async ({ page }) => {
   await expect(s.locator('.buy-c h3')).toHaveText(['Семейная ипотека', 'IT-ипотека', 'Рассрочка до сдачи дома', 'Рыночная ипотека', 'Trade-in', 'Бронь онлайн']);
   await expect(s.getByRole('link', { name: 'Выбрать квартиру' })).toHaveAttribute('href', '#flats');
 });
+
+test('застройщик', async ({ page }) => {
+  const s = page.locator('#dev');
+  expect(await textOf(s.locator('h2'))).toBe(copy.dev.h2);
+  expect(await textOf(s.locator('.escrow h3'))).toBe(copy.dev.escrow);
+  await expect(s.locator('.num')).toHaveCount(4);
+  await expect(s.locator('.flow li')).toHaveCount(3);
+});
