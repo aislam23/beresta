@@ -35,7 +35,9 @@
 - Задачи 21–23 (картинки) выполняет **координатор, а не субагент**, потому что в них есть контрольные точки с Артёмом. Они идут **параллельно** с задачами 6–20, но **в отдельном worktree**, чтобы коммиты не смешивались и не ловили `index.lock`:
   ```bash
   git worktree add ../beresta-images -b feat/images feat/landing   # после задачи 6
+  cd ../beresta-images && npm ci                                    # нужен sharp для make-og.mjs
   ```
+  **Все команды задач 21–23 выполняются из `/Users/macbook/Desktop/beresta-images`**, а не из основного дерева.
   В worktree трогаются только `docs/images/`, `scripts/`, `src/assets/photos/*.png`, `public/og.jpg`. Перед задачей 24 координатор мержит: `git -C /Users/macbook/Desktop/beresta merge --no-ff feat/images` (в паузе между задачами субагентов), затем `git worktree remove ../beresta-images`. Точки кадрирования (`focus` в `src/assets/photos/index.ts`) настраиваются уже после мержа, в задаче 25. Задача 21 нужна до 22, задача 22 нужна до 23.
 - Задачи 24–25 идут в конце.
 
@@ -1081,7 +1083,7 @@ export function getShot(id: ShotId): ImageMetadata | undefined {
   return files[`./${id}.png`]?.default;
 }
 
-/** Точка кадрирования для object-fit: cover. Уточняется в задаче 23 по готовым кадрам. */
+/** Точка кадрирования для object-fit: cover. Уточняется в задаче 25 (шаг 0) по готовым кадрам. */
 export const focus: Record<ShotId, string> = {
   '01-hero': '50% 60%',
   '02-yard': '50% 50%',
@@ -1300,7 +1302,7 @@ import { heroNums } from '../data/complex';
 </section>
 ```
 
-CSS: строки 62–78 прототипа (`.hero`, `.hero-ph` → `:global(.hero-photo)`, `.fog`, `.hero .wrap`, `.hero-card`, `.hero h1` с `margin: 0`, `.hero h1 span`, `.hero .lead`, `.hero .cta`, `.hero .note`, `.nums`). **Не переносить `.tag`.** Фото получает `position: absolute; inset: 0; border-radius: 0; min-height: 0;` через `.hero :global(.hero-photo)`, а фон-туман из строки 64 (`.hero-ph{...}`) через `.hero :global(.hero-photo .ph)`. У `.hero` добавь `overflow: hidden`: туман `.fog` выходит за края на 10% и иначе даст горизонтальный скролл. Медиа: `.nums` 2 колонки при 980px (строка 229); при 640px строки 237–239 (`.hero`, `.hero :global(.hero-photo) { bottom: auto; height: 420px }`, `.hero-card`).
+CSS: строки 62–78 прототипа (`.hero`, `.hero-ph` → `:global(.hero-photo)`, `.fog`, `.hero .wrap`, `.hero-card`, `.hero h1` с `margin: 0`, `.hero h1 span`, `.hero .lead`, `.hero .cta`, `.hero .note`, `.nums`). **Не переносить `.tag`.** Фото получает `position: absolute; inset: 0; border-radius: 0; min-height: 0;` через `.hero :global(.hero-photo)`, а фон-туман из строки 64 (`.hero-ph{...}`) через `.hero :global(.hero-photo.tone-mist .ph)`. У `.hero` добавь `overflow: hidden`: туман `.fog` выходит за края на 10% и иначе даст горизонтальный скролл. Медиа: `.nums` 2 колонки при 980px (строка 229); при 640px строки 237–239 (`.hero`, `.hero :global(.hero-photo) { bottom: auto; height: 420px }`, `.hero-card`).
 
 - [ ] **Step 3: index.astro** — добавить `<Hero />` первым в `<main>`.
 
@@ -2052,7 +2054,7 @@ test.describe('бронь', () => {
 </script>
 ```
 
-CSS: строки 212–218 и 221–223 прототипа (`dialog`, `::backdrop`, `.dlg`, `.dlg h3`, `.dlg p`, `.x`, `.sum`, `.dlg .ok`). Строки 219–220 (`.dlg label`, `.dlg input`) не нужны: поля берут общие стили `.lead-form.light` из `global.css`. Добавь `.ok { border-radius: 16px; padding: 20px; background: var(--pine-2) } .ok h3 { font-size: 22px; margin-bottom: 6px } .ok p, .demo { color: var(--ink-2) } .demo { font-size: 12px; margin-top: 8px }`.
+CSS: строки 212–217 и 220–222 прототипа (`dialog`, `::backdrop`, `.dlg`, `.dlg h3`, `.dlg p`, `.dlg .x`, `.sum`, `.dlg .ok`). Строки 218–219 (`.dlg label`, `.dlg input`) не нужны: поля берут общие стили `.lead-form.light` из `global.css`. Добавь `.ok { border-radius: 16px; padding: 20px; background: var(--pine-2) } .ok h3 { font-size: 22px; margin-bottom: 6px } .ok p, .demo { color: var(--ink-2) } .demo { font-size: 12px; margin-top: 8px }`.
 
 - [ ] **Step 3: index.astro** — `<BookingDialog />` после `<MobileBar />`.
 
