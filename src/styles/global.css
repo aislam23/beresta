@@ -22,6 +22,8 @@ main { scroll-margin-top: var(--hdr-h); }
 .lead-form input, .lead-form select { font: 500 16px var(--font); padding: 15px 16px; border-radius: 12px; border: 1px solid var(--f-border); background: var(--f-bg); color: var(--f-text); }
 .lead-form input::placeholder { color: var(--f-ph); }
 .lead-form select option { color: var(--ink); }
+/* фокус на первом неверном поле не уводит его под липкую шапку и нижнюю плашку */
+.lead-form input, .lead-form select { scroll-margin: calc(var(--hdr-h) + 16px) 0 88px; }
 .lead-form input:focus, .lead-form select:focus { border-color: var(--copper); background: var(--f-bg-focus); }
 .lead-form input[aria-invalid="true"] { border-color: var(--f-err); }
 .lead-form .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
