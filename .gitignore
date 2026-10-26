@@ -5,3 +5,6 @@ dist/
 .env.*
 .DS_Store
 .superpowers/
+test-results/
+playwright-report/
+src/assets/photos/takes/
