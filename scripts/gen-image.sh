@@ -36,7 +36,7 @@ trap 'rm -f "$MARK"' EXIT
 codex exec --skip-git-repo-check -s workspace-write -C "$ROOT" ${REF_ARGS[@]+"${REF_ARGS[@]}"} -- "$PROMPT"
 
 if [ ! -f "$OUT" ]; then
-  NEW="$(find "$HOME/.codex/generated_images" -type f -name '*.png' -newer "$MARK" -print0 | xargs -0 ls -t 2>/dev/null | head -1 || true)"
+  NEW="$(find "$HOME/.codex/generated_images" -type f -name '*.png' -newer "$MARK" -exec ls -t {} + 2>/dev/null | head -1 || true)"
   [ -n "$NEW" ] || { echo "Codex не вернул картинку" >&2; exit 1; }
   cp "$NEW" "$OUT"
 fi

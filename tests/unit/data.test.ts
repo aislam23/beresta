@@ -38,3 +38,19 @@ describe('данные', () => {
     }
   });
 });
+
+describe('одни и те же факты совпадают в разных блоках', () => {
+  const nb = (s: string) => s.replace(/ /g, ' ');
+  it('цифры первого экрана совпадают с блоком «Район» и ценой студии', () => {
+    const byTitle = (t: string) => distances.find((d) => d.title === t)!;
+    expect([heroNums[0].value, heroNums[0].unit]).toEqual([byTitle('Сосновый бор').value, byTitle('Сосновый бор').unit]);
+    expect([heroNums[1].value, heroNums[1].unit]).toEqual([byTitle('Центр Казани').value, byTitle('Центр Казани').unit]);
+    expect([heroNums[2].value, heroNums[2].unit]).toEqual([byTitle('Станция метро').value, byTitle('Станция метро').unit]);
+    expect(heroNums[3].value).toBe(flats.find((f) => f.id === 'studio')!.priceFrom);
+  });
+  it('готовность корпуса 1 одинакова в карточке и в ответе FAQ', () => {
+    const h1 = houses.find((h) => h.n === 1)!;
+    expect(nb(h1.status)).toContain(`${h1.readiness}%`);
+    expect(nb(faq[0].a)).toContain(`Корпус 1 готов на ${h1.readiness}%`);
+  });
+});
