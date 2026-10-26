@@ -35,7 +35,8 @@ test('все секции на месте и якоря шапки ведут к
 
 test('нет плашек над заголовками и длинных тире', async ({ page }) => {
   await expect(page.locator('.eyebrow, .tag, .pill')).toHaveCount(0);
-  const text = await page.locator('body').innerText();
+  // textContent, а не innerText: так проверяются и закрытое окно брони, и скрытые блоки успеха
+  const text = (await page.locator('body').textContent()) ?? '';
   expect(text).not.toContain('—');
 });
 

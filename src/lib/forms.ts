@@ -22,14 +22,28 @@ function showErrors(form: HTMLFormElement, errors: LeadErrors) {
   }
 }
 
+/**
+ * Поколение формы: resetLeadForm увеличивает его, и отправка, начатая до сброса,
+ * после ответа ничего не трогает (Esc во время «Отправляем…» и открытие другой квартиры).
+ */
+const generation = new WeakMap<HTMLFormElement, number>();
+const labels = new WeakMap<HTMLFormElement, string>();
+
+function restoreSubmit(form: HTMLFormElement, submit: HTMLButtonElement) {
+  submit.disabled = false;
+  submit.textContent = labels.get(form) ?? submit.textContent;
+}
+
 /** Подключает валидацию и демо-отправку к форме с data-kind="pick" | "booking". */
 export function initLeadForm(form: HTMLFormElement, extra: () => Partial<LeadInput> = () => ({})) {
   const { success, submit } = parts(form);
   const kind = form.dataset.kind as LeadInput['kind'];
-  const label = submit.textContent ?? '';
+  labels.set(form, submit.textContent ?? '');
+  generation.set(form, 0);
 
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (submit.disabled) return;
     const data = new FormData(form);
     const result = validateLead({
       kind,
@@ -47,11 +61,16 @@ export function initLeadForm(form: HTMLFormElement, extra: () => Partial<LeadInp
       return;
     }
     showErrors(form, {});
+    const gen = generation.get(form);
     submit.disabled = true;
     submit.textContent = 'Отправляем…';
-    await submitLead(result.lead);
-    submit.disabled = false;
-    submit.textContent = label;
+    try {
+      await submitLead(result.lead);
+    } finally {
+      // форму успели сбросить: кнопку уже восстановил resetLeadForm
+      if (generation.get(form) === gen) restoreSubmit(form, submit);
+    }
+    if (generation.get(form) !== gen) return;
     form.hidden = true;
     success.hidden = false;
     success.querySelector<HTMLElement>('[data-lead-success-title]')?.focus();
@@ -60,7 +79,9 @@ export function initLeadForm(form: HTMLFormElement, extra: () => Partial<LeadInp
 
 /** Возвращает форму в исходное состояние (для повторного открытия окна брони). */
 export function resetLeadForm(form: HTMLFormElement) {
-  const { success } = parts(form);
+  const { success, submit } = parts(form);
+  generation.set(form, (generation.get(form) ?? 0) + 1);
+  restoreSubmit(form, submit);
   form.reset();
   showErrors(form, {});
   form.hidden = false;

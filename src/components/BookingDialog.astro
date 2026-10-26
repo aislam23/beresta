@@ -1,8 +1,8 @@
-<dialog id="booking" aria-labelledby="booking-title">
+<dialog id="booking" aria-labelledby="booking-title" aria-describedby="booking-text">
   <div class="dlg" data-lead-box>
     <button type="button" class="x" data-close aria-label="Закрыть">×</button>
     <h3 id="booking-title">Бронь на 7 дней</h3>
-    <p>Квартиру снимем с продажи. 15&nbsp;000&nbsp;₽ пойдут в счёт стоимости, а если передумаете, вернём их.</p>
+    <p id="booking-text">Квартиру снимем с продажи. 15&nbsp;000&nbsp;₽ пойдут в счёт стоимости, а если передумаете, вернём их.</p>
     <div class="sum"><span data-booking-what></span><span>15&nbsp;000&nbsp;₽</span></div>
     <form class="lead-form light" data-kind="booking" novalidate>
       <div class="field">
@@ -49,8 +49,15 @@
       });
     });
     dlg.querySelector('[data-close]')?.addEventListener('click', () => dlg.close());
-    // клик по фону: у dialog нет паддинга, поэтому target === dlg только вне .dlg
-    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    // клик по фону: у dialog нет паддинга, поэтому target === dlg только вне .dlg.
+    // Нажатие тоже должно быть на фоне: иначе выделение текста в поле с отпусканием
+    // мыши снаружи даёт click по общему предку, то есть по dialog, и окно закрывается.
+    let downOnBackdrop = false;
+    dlg.addEventListener('pointerdown', (e) => { downOnBackdrop = e.target === dlg; });
+    dlg.addEventListener('click', (e) => {
+      if (downOnBackdrop && e.target === dlg) dlg.close();
+      downOnBackdrop = false;
+    });
     dlg.addEventListener('close', () => opener?.focus());
   }
 </script>

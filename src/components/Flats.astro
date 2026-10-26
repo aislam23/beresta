@@ -8,7 +8,7 @@ import { flats, flatsNotes } from '../data/flats';
     {flats.map((f) => <FlatCard flat={f} />)}
     <article class="flat-help">
       <h3>Не знаете, что выбрать?</h3>
-      <p>Расскажите, сколько вас и какой бюджет. Менеджер пришлёт <span class="nw">3–5&nbsp;квартир</span> с расчётом платежа по ипотеке.</p>
+      <p>Расскажите, сколько вас и какой бюджет. Менеджер пришлёт <span class="nowrap">3–5&nbsp;квартир</span> с расчётом платежа по ипотеке.</p>
       <a class="btn btn-c" href="#pick">Получить подборку</a>
     </article>
   </div>
@@ -23,7 +23,6 @@ import { flats, flatsNotes } from '../data/flats';
   .flat-help p { color: #C9D4C4; }
   .flat-help .btn { align-self: flex-start; }
   /* после «–» браузер может перенести строку, держим «3–5 квартир» вместе */
-  .nw { white-space: nowrap; }
   .flats-note { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
   .box { background: var(--pine-2); border-radius: 16px; padding: 20px 22px; font-size: 15px; line-height: 1.5; }
   .box b { display: block; margin-bottom: 4px; }

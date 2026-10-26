@@ -18,7 +18,7 @@ import { heroNums } from '../data/complex';
       <h1 id="hero-title">Город за спиной, <span>лес за&nbsp;окном</span></h1>
       <p class="lead">Три дома у соснового бора и реки, в 15&nbsp;минутах от центра Казани. Машины стоят в подземном паркинге, во двор они не заезжают.</p>
       <div class="cta">
-        <a class="btn btn-p" href="#pick">Подобрать <span class="nw">3–5&nbsp;вариантов</span></a>
+        <a class="btn btn-p" href="#pick">Подобрать <span class="nowrap">3–5&nbsp;вариантов</span></a>
         <a class="btn btn-s" href="#flats">Планировки и цены</a>
       </div>
       <p class="note">Менеджер соберёт варианты под ваш бюджет и ипотеку. Консультация занимает 30&nbsp;минут.</p>
@@ -29,7 +29,7 @@ import { heroNums } from '../data/complex';
   </div>
 </section>
 <style>
-  .hero { position: relative; overflow: hidden; padding: 0; scroll-margin-top: var(--hdr-h); min-height: max(640px, calc(100svh - var(--hdr-h))); display: flex; flex-direction: column; justify-content: flex-end; }
+  .hero { position: relative; overflow: hidden; padding: 0; min-height: max(640px, calc(100svh - var(--hdr-h))); display: flex; flex-direction: column; justify-content: flex-end; }
   .hero :global(.hero-photo) { position: absolute; inset: 0; border-radius: 0; min-height: 0; }
   .hero :global(.hero-photo.tone-mist .ph) { background:
       radial-gradient(120% 70% at 72% 25%, #FBF4E6 0%, rgba(251, 244, 230, 0) 60%),
@@ -42,7 +42,6 @@ import { heroNums } from '../data/complex';
   .hero h1 { font-size: clamp(40px, 6vw, 80px); letter-spacing: -.05em; line-height: .95; margin: 0; }
   .hero h1 span { color: var(--pine); }
   .hero .lead { margin-top: 18px; }
-  .nw { white-space: nowrap; }
   .hero .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
   .hero .note { font-size: 13px; color: var(--ink-2); margin-top: 12px; }
   .nums { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
