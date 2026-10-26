@@ -1,0 +1,34 @@
+---
+import Section from './Section.astro';
+import Photo from './Photo.astro';
+import { audiences } from '../data/audiences';
+---
+<Section id="who" title="Кому подойдёт<br>«Береста»" flushTop>
+  <div class="who">
+    {audiences.map((a) => (
+      <article class="who-c">
+        <Photo class="who-photo" shot={a.shot} tone={a.tone} alt={a.alt} placeholder={a.placeholder} sizes="(max-width: 640px) 100vw, (max-width: 980px) 50vw, 300px" scene={false} />
+        <div class="body">
+          <h3>{a.title}</h3>
+          <p>{a.text}</p>
+          <div class="fit"><b>{a.fitTitle}</b>{a.fitText}</div>
+        </div>
+      </article>
+    ))}
+  </div>
+</Section>
+<style>
+  .who { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .who-c { background: var(--card); border-radius: var(--r); border: 1px solid var(--line); overflow: hidden; display: flex; flex-direction: column; }
+  .who-c :global(.who-photo) { border-radius: 0; min-height: 200px; }
+  .who-c .body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .who-c p { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+  .fit { margin-top: auto; padding-top: 14px; border-top: 1px dashed var(--line); font-size: 13px; line-height: 1.4; }
+  .fit b { display: block; font-size: 15px; }
+  @media (max-width: 980px) {
+    .who { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .who { grid-template-columns: 1fr; }
+  }
+</style>

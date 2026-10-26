@@ -29,7 +29,7 @@ import { heroNums } from '../data/complex';
   </div>
 </section>
 <style>
-  .hero { position: relative; overflow: hidden; padding: 0; min-height: max(640px, calc(100svh - 68px)); display: flex; flex-direction: column; justify-content: flex-end; }
+  .hero { position: relative; overflow: hidden; padding: 0; scroll-margin-top: var(--hdr-h); min-height: max(640px, calc(100svh - 68px)); display: flex; flex-direction: column; justify-content: flex-end; }
   .hero :global(.hero-photo) { position: absolute; inset: 0; border-radius: 0; min-height: 0; }
   .hero :global(.hero-photo.tone-mist .ph) { background:
       radial-gradient(120% 70% at 72% 25%, #FBF4E6 0%, rgba(251, 244, 230, 0) 60%),
@@ -38,7 +38,7 @@ import { heroNums } from '../data/complex';
   .hero :global(.hero-photo svg) { height: 70%; }
   .fog { position: absolute; left: -10%; right: -10%; bottom: 24%; height: 26%; background: linear-gradient(180deg, rgba(244, 239, 230, 0), rgba(244, 239, 230, .85) 50%, rgba(244, 239, 230, 0)); filter: blur(8px); pointer-events: none; }
   .hero .wrap { position: relative; width: 100%; padding-top: 48px; padding-bottom: 28px; }
-  .hero-card { background: rgba(251, 248, 242, .94); backdrop-filter: blur(8px); border-radius: 24px; padding: clamp(24px, 3.4vw, 44px); max-width: 620px; margin-bottom: 12px; box-shadow: 0 20px 50px -30px rgba(38, 40, 43, .35); }
+  .hero-card { background: rgba(251, 248, 242, .94); backdrop-filter: blur(8px); border-radius: 24px; padding: clamp(24px, 3.4vw, 44px); max-width: 720px; margin-bottom: 12px; box-shadow: 0 20px 50px -30px rgba(38, 40, 43, .35); }
   .hero h1 { font-size: clamp(40px, 6vw, 80px); letter-spacing: -.05em; line-height: .95; margin: 0; }
   .hero h1 span { color: var(--pine); }
   .hero .lead { margin-top: 18px; }

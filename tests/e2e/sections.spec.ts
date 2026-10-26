@@ -54,3 +54,17 @@ test('двор', async ({ page }) => {
   await expect(s.locator('.feat svg[aria-hidden="true"]')).toHaveCount(4);
   await expect(s.locator('.shop')).toHaveCount(4);
 });
+
+test('логотип в шапке возвращает в самый верх страницы', async ({ page }) => {
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
+  await page.locator('header').getByRole('link', { name: '«Береста», в начало страницы' }).click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+});
+
+test('для кого', async ({ page }) => {
+  const s = page.locator('#who');
+  expect(await textOf(s.locator('h2'))).toBe(copy.who.h2);
+  await expect(s.locator('.who-c h3')).toHaveText(copy.who.cards);
+  await expect(s.locator('.fit')).toHaveCount(4);
+});

@@ -16,7 +16,7 @@ import { nav, complex } from '../data/complex';
 </header>
 <style>
   .hdr { position: sticky; top: 0; z-index: 40; background: rgba(244, 239, 230, .86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
-  .hdr .wrap { display: flex; align-items: center; justify-content: space-between; height: var(--hdr-h); gap: 24px; }
+  .hdr .wrap { display: flex; align-items: center; justify-content: space-between; height: calc(var(--hdr-h) - 1px); gap: 24px; }
   .nav { display: flex; gap: 26px; font-size: 14px; font-weight: 600; }
   .nav a { text-decoration: none; color: var(--ink-2); } .nav a:hover { color: var(--ink); }
   .hdr-r { display: flex; align-items: center; gap: 18px; font-size: 14px; font-weight: 700; }

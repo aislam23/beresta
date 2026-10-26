@@ -1,5 +1,5 @@
 <div class="map">
-    <svg viewBox="0 0 600 520" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Схема района: бор, набережная, метро, школа и ТЦ вокруг комплекса">
+    <svg viewBox="0 0 600 520" preserveAspectRatio="xMidYMax meet" role="img" aria-label="Схема района: бор, набережная, метро, школа и ТЦ вокруг комплекса">
       <rect width="600" height="520" fill="#F3EEE4"/>
       <path d="M0 360 C120 330 200 420 320 400 S520 330 600 350 L600 520 L0 520Z" fill="#CFDCD8"/>
       <path d="M0 372 C120 342 200 432 320 412 S520 342 600 362" fill="none" stroke="#B9773F" stroke-width="3" stroke-dasharray="8 6"/>
@@ -16,17 +16,21 @@
         <text x="360" y="470">Набережная · 350 м</text>
         <text x="40" y="480" fill="#9A6A3F">Велодорожка 6 км</text>
         <text x="440" y="130">Метро · 9 мин</text>
-        <text x="470" y="250">Школа · 5 мин</text>
+        <text x="455" y="250">Школа · 5 мин</text>
         <text x="430" y="320">ТЦ «Сосны»</text>
       </g>
-      <circle cx="460" cy="120" r="7" fill="#B9773F"/><circle cx="480" cy="240" r="7" fill="#2E4A3B"/><circle cx="420" cy="314" r="7" fill="#2E4A3B"/>
+      <circle cx="428" cy="125" r="7" fill="#B9773F"/><circle cx="443" cy="245" r="7" fill="#2E4A3B"/><circle cx="420" cy="314" r="7" fill="#2E4A3B"/>
     </svg>
 </div>
 <style>
-  .map { background: var(--card); border-radius: var(--r); border: 1px solid var(--line); position: relative; min-height: 520px; overflow: hidden; }
+  .map { background: #F3EEE4; border-radius: var(--r); border: 1px solid var(--line); position: relative; min-height: 520px; overflow: hidden; }
   .map svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .map text { font-family: var(--font); }
+  /* ниже 980px схема держит пропорции viewBox, чтобы подписи не обрезались */
   @media (max-width: 980px) {
-    .map { min-height: 380px; }
+    .map { min-height: 0; aspect-ratio: 600 / 520; }
+  }
+  @media (max-width: 640px) {
+    .map text { font-size: 19px; }
   }
 </style>
