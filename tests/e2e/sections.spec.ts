@@ -36,3 +36,11 @@ test('первый экран', async ({ page }) => {
   await expect(hero.getByRole('link', { name: copy.hero.cta[1] })).toHaveAttribute('href', '#flats');
   await expect(hero.locator('.num')).toHaveCount(4);
 });
+
+test('район', async ({ page }) => {
+  const s = page.locator('#area');
+  expect(await textOf(s.locator('h2'))).toBe(copy.area.h2);
+  expect(await textOf(s.locator('.lead'))).toBe(copy.area.lead);
+  await expect(s.locator('.dist-row')).toHaveCount(5);
+  await expect(s.getByRole('img', { name: 'Схема района: бор, набережная, метро, школа и ТЦ вокруг комплекса' })).toBeVisible();
+});

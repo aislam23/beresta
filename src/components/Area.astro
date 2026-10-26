@@ -1,0 +1,30 @@
+---
+import Section from './Section.astro';
+import AreaMap from './AreaMap.astro';
+import { distances } from '../data/area';
+---
+<Section id="area" title="Лес в 200&nbsp;метрах,<br>центр в 15&nbsp;минутах" lead="Комплекс построен на краю города, у соснового бора. Школа, два детских сада, поликлиника и ТЦ «Сосны» уже работают.">
+  <div class="area">
+    <AreaMap />
+    <ul class="dist">
+      {distances.map((d) => (
+        <li class="dist-row"><b>{d.value}<small>{' '}{d.unit}</small></b><span><strong>{d.title}</strong>{d.text}</span></li>
+      ))}
+    </ul>
+  </div>
+</Section>
+<style>
+  .area { display: grid; grid-template-columns: 1.05fr 1fr; gap: 12px; }
+  .dist { display: grid; gap: 12px; align-content: start; list-style: none; margin: 0; padding: 0; }
+  .dist-row { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: center; background: var(--card); border-radius: 16px; padding: 18px 20px; border: 1px solid var(--line); }
+  .dist-row b { font-size: 28px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
+  .dist-row b small { font-size: 14px; letter-spacing: 0; }
+  .dist-row span { color: var(--ink-2); font-size: 15px; line-height: 1.4; }
+  .dist-row span strong { color: var(--ink); display: block; font-weight: 700; }
+  @media (max-width: 980px) {
+    .area { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .dist-row { grid-template-columns: 90px 1fr; }
+  }
+</style>
