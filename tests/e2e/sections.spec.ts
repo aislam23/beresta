@@ -41,8 +41,41 @@ test('район', async ({ page }) => {
   const s = page.locator('#area');
   expect(await textOf(s.locator('h2'))).toBe(copy.area.h2);
   expect(await textOf(s.locator('.lead'))).toBe(copy.area.lead);
-  await expect(s.locator('.dist-row')).toHaveCount(5);
-  await expect(s.getByRole('img', { name: 'Схема района: бор, набережная, метро, школа и ТЦ вокруг комплекса' })).toBeVisible();
+  await expect(s.getByRole('img', { name: 'Женщина с коляской идёт по тропинке в сосновом бору, за деревьями видны дома комплекса' })).toBeAttached();
+});
+
+test('ролик района идёт вслед за прокруткой секции', async ({ page }) => {
+  const area = page.locator('#area');
+  const scrollTo = (p: number) => area.evaluate((el: HTMLElement, p) => window.scrollTo({ top: el.offsetTop + p * (el.offsetHeight - innerHeight), behavior: 'instant' }), p);
+  await scrollTo(0);
+  await expect(area).toHaveClass(/ready/, { timeout: 15_000 });
+  const time = () => area.locator('video').evaluate((v: HTMLVideoElement) => v.currentTime / v.duration);
+  for (const p of [0.5, 0.9, 0.2]) {
+    await scrollTo(p);
+    await expect.poll(time).toBeCloseTo(p, 1);
+  }
+});
+
+test('схема района', async ({ page }) => {
+  const s = page.locator('#area-map');
+  expect(await textOf(s.locator('h2'))).toBe(copy.areaMap.h2);
+  expect(await textOf(s.locator('.lead'))).toBe(copy.areaMap.lead);
+  await expect(s.locator('.place strong')).toHaveText(['Сосновый бор', 'Набережная реки', 'Станция метро', 'Школа на 1 100 мест', 'Два детских сада', 'Поликлиника', 'ТЦ «Сосны»', 'Центр Казани']);
+  await expect(s.getByRole('img', { name: /Вид сверху на район/ })).toBeVisible();
+});
+
+test('схема района: выбор места подсвечивает точку и маршрут', async ({ page, isMobile }) => {
+  const s = page.locator('#area-map');
+  const metro = s.getByRole('button', { name: /Станция метро/ });
+  await metro.scrollIntoViewIfNeeded();
+  if (isMobile) await metro.tap(); else await metro.hover();
+  await expect(metro).toHaveAttribute('aria-pressed', 'true');
+  await expect(s.getByRole('button', { name: /Сосновый бор/ })).toHaveAttribute('aria-pressed', 'false');
+  await expect(s.locator('.pin.on')).toHaveAttribute('data-id', 'metro');
+  await expect(s.locator('.route.on')).toHaveAttribute('data-id', 'metro');
+  // на карте точка тоже выбирает место
+  await s.locator('.pin[data-id="school"]').click();
+  await expect(s.getByRole('button', { name: /Школа на 1 100 мест/ })).toHaveAttribute('aria-pressed', 'true');
 });
 
 test('двор', async ({ page }) => {

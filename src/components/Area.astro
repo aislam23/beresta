@@ -1,30 +1,136 @@
 ---
+import { getImage } from 'astro:assets';
 import Section from './Section.astro';
 import AreaMap from './AreaMap.astro';
-import { distances } from '../data/area';
+import wideJpg from '../assets/video/area-wide.jpg';
+import tallJpg from '../assets/video/area-tall.jpg';
+import wideMp4 from '../assets/video/area-wide.mp4?url';
+import tallMp4 from '../assets/video/area-tall.mp4?url';
+
+/** Вертикальная вырезка ролика нужна, когда экран выше, чем шире: иначе cover оставит от кадра узкую полосу. */
+const tall = '(max-aspect-ratio: 4/5)';
+const [wideAvif, wideWebp, tallAvif, tallWebp] = await Promise.all([
+  getImage({ src: wideJpg, format: 'avif', width: 1600 }),
+  getImage({ src: wideJpg, format: 'webp', width: 1600 }),
+  getImage({ src: tallJpg, format: 'avif', width: 540 }),
+  getImage({ src: tallJpg, format: 'webp', width: 540 }),
+]);
+const fallback = await getImage({ src: wideJpg, format: 'jpg', width: 1600 });
 ---
-<Section id="area" title="Лес в 200&nbsp;метрах,<br>центр в 15&nbsp;минутах" lead="Комплекс построен на краю города, у соснового бора. Школа, два детских сада, поликлиника и ТЦ «Сосны» уже работают.">
-  <div class="area">
-    <AreaMap />
-    <ul class="dist">
-      {distances.map((d) => (
-        <li class="dist-row"><b>{d.value}<small>{' '}{d.unit}</small></b><span><strong>{d.title}</strong>{d.text}</span></li>
-      ))}
-    </ul>
+<section id="area" class="area" aria-labelledby="area-title" data-scrub data-tall={tall} data-src-wide={wideMp4} data-src-tall={tallMp4}>
+  <div class="stage">
+    <picture class="poster">
+      <source media={tall} srcset={tallAvif.src} type="image/avif" />
+      <source media={tall} srcset={tallWebp.src} type="image/webp" />
+      <source srcset={wideAvif.src} type="image/avif" />
+      <source srcset={wideWebp.src} type="image/webp" />
+      <img src={fallback.src} width="1600" height="900" alt="Женщина с коляской идёт по тропинке в сосновом бору, за деревьями видны дома комплекса" loading="lazy" decoding="async" />
+    </picture>
+    <video muted playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+    <div class="scrim" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="head">
+        <h2 id="area-title">Лес в 200&nbsp;метрах</h2>
+        <p class="lead">Комплекс построен на краю города, у соснового бора. До первых сосен три минуты пешком.</p>
+      </div>
+    </div>
   </div>
+</section>
+<Section id="area-map" title="Центр в 15&nbsp;минутах" lead="Школа, два детских сада, поликлиника и ТЦ «Сосны» уже работают.">
+  <AreaMap />
 </Section>
 <style>
-  .area { display: grid; grid-template-columns: 1.05fr 1fr; gap: 12px; }
-  .dist { display: grid; gap: 12px; align-content: start; list-style: none; margin: 0; padding: 0; }
-  .dist-row { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: center; background: var(--card); border-radius: 16px; padding: 18px 20px; border: 1px solid var(--line); }
-  .dist-row b { font-size: 28px; font-weight: 800; letter-spacing: -.04em; line-height: 1; }
-  .dist-row b small { font-size: 14px; letter-spacing: 0; }
-  .dist-row span { color: var(--ink-2); font-size: 15px; line-height: 1.4; }
-  .dist-row span strong { color: var(--ink); display: block; font-weight: 700; }
-  @media (max-width: 980px) {
-    .area { grid-template-columns: 1fr; }
+  /* Пока секция прокручивается, сцена стоит на месте, а ролик идёт от леса к домам.
+     Длина секции задаёт, сколько нужно прокрутить на весь пролёт: экран сцены плюс 180vh. */
+  .area { position: relative; height: 280vh; background: var(--ink); }
+  .stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; align-items: flex-end; }
+  .poster, .poster img, video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  video { opacity: 0; transition: opacity .4s; }
+  .area.ready video { opacity: 1; }
+  /* Солнце в ролике бьёт слева, поэтому под текстом темнее, а справа, где открываются дома, кадр чистый */
+  .scrim { position: absolute; inset: 0; background:
+    linear-gradient(90deg, rgba(20, 24, 22, .62) 0%, rgba(20, 24, 22, .35) 38%, rgba(20, 24, 22, 0) 65%),
+    linear-gradient(0deg, rgba(20, 24, 22, .55) 0%, rgba(20, 24, 22, 0) 45%); }
+  .wrap { position: relative; width: 100%; padding-bottom: clamp(48px, 9vh, 112px); }
+  .head { max-width: 560px; color: #fff; text-shadow: 0 1px 24px rgba(0, 0, 0, .25); }
+  .head .lead { color: rgba(255, 255, 255, .88); }
+  @media (max-aspect-ratio: 4/5) {
+    .area { height: 240vh; }
+    /* в начале ролика женщина с коляской у левого края вырезки */
+    .poster img, video { object-position: 25% 50%; }
+    .scrim { background: linear-gradient(0deg, rgba(20, 24, 22, .72) 0%, rgba(20, 24, 22, .3) 40%, rgba(20, 24, 22, 0) 62%); }
+    .wrap { padding-bottom: calc(clamp(32px, 6vh, 56px) + 72px); /* над нижней плашкой телефона */ }
   }
-  @media (max-width: 640px) {
-    .dist-row { grid-template-columns: 90px 1fr; }
+  /* Без анимации: обычный экран со стоп-кадром, ролик не грузится */
+  @media (prefers-reduced-motion: reduce) {
+    .area { height: auto; }
+    .stage { position: relative; height: min(100svh, 820px); }
+    video { display: none; }
   }
 </style>
+<script>
+  const root = document.querySelector<HTMLElement>('[data-scrub]');
+  const video = root?.querySelector('video');
+  if (root && video && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let duration = 0;
+    let current = 0;
+    let frame = 0;
+    let last = 0;
+    let inView = false;
+
+    /** Доля прокрутки секции: 0 — сцена только встала на место, 1 — сейчас уедет вверх. */
+    const progress = () => {
+      const r = root.getBoundingClientRect();
+      const span = r.height - innerHeight;
+      return span > 0 ? Math.min(1, Math.max(0, -r.top / span)) : 0;
+    };
+
+    // currentTime догоняет скролл плавно, а новая перемотка ждёт конца предыдущей:
+    // иначе на быстром колесе браузер копит очередь перемоток и кадр отстаёт.
+    // Догон считается по времени, а не по кадрам, чтобы на редких кадрах ролик не отставал.
+    const tick = (now: number) => {
+      frame = 0;
+      const dt = last ? Math.min(now - last, 100) : 16;
+      last = now;
+      const target = progress() * duration;
+      current += (target - current) * (1 - Math.exp(-dt / 70));
+      if (Math.abs(target - current) < 1 / 48) current = target;
+      if (!video.seeking && Math.abs(video.currentTime - current) > 1 / 96) video.currentTime = current;
+      if (current !== target || video.seeking) frame = requestAnimationFrame(tick);
+      else last = 0;
+    };
+    const schedule = () => { if (inView && duration && !frame) frame = requestAnimationFrame(tick); };
+
+    const load = async () => {
+      const src = matchMedia(root.dataset.tall!).matches ? root.dataset.srcTall! : root.dataset.srcWide!;
+      // Ролик целиком в памяти: перемотка не ждёт сети и не дёргает range-запросы
+      try {
+        const res = await fetch(src);
+        if (!res.ok) throw new Error(String(res.status));
+        video.src = URL.createObjectURL(await res.blob());
+      } catch {
+        video.src = src;
+      }
+      video.addEventListener('loadedmetadata', () => {
+        // На iOS кадр после перемотки рисуется, только если ролик хоть раз запускали
+        video.play().then(() => video.pause()).catch(() => {}).finally(() => {
+          duration = Math.max(0, video.duration - 0.05);
+          current = progress() * duration;
+          video.currentTime = current;
+          schedule();
+        });
+      }, { once: true });
+      video.addEventListener('seeked', () => root.classList.add('ready'), { once: true });
+      video.load();
+    };
+
+    let requested = false;
+    new IntersectionObserver(([e]) => {
+      inView = e.isIntersecting;
+      if (inView && !requested) { requested = true; load(); }
+      schedule();
+    }, { rootMargin: '100% 0px' }).observe(root);
+    addEventListener('scroll', schedule, { passive: true });
+    addEventListener('resize', schedule);
+  }
+</script>
