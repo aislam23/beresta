@@ -1,4 +1,5 @@
-export interface BuyOption { big?: string; title: string; text: string; accent?: boolean }
+/** С крупной цифрой — главные способы, они идут карточками. Остальные — строкой под ними. */
+export interface BuyOption { big?: string; title: string; text: string; cta?: boolean }
 
 export const buyOptions: BuyOption[] = [
   { big: '6%', title: 'Семейная ипотека', text: 'Для семей с детьми.' },
@@ -6,5 +7,5 @@ export const buyOptions: BuyOption[] = [
   { big: '0%', title: 'Рассрочка до сдачи дома', text: 'Первый взнос от 30%, остаток выплачиваете до сдачи дома без процентов.' },
   { title: 'Рыночная ипотека', text: 'В банках-партнёрах застройщика.' },
   { title: 'Trade-in', text: 'Старую квартиру зачтём в стоимость новой. Продавать её заранее самому не придётся.' },
-  { title: 'Бронь онлайн', text: '15 000 ₽ на 7 дней. За это время можно спокойно оформить ипотеку.', accent: true },
+  { title: 'Бронь онлайн', text: '15 000 ₽ на 7 дней. За это время можно спокойно оформить ипотеку.', cta: true },
 ];

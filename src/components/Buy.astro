@@ -1,33 +1,46 @@
 ---
 import Section from './Section.astro';
 import { buyOptions } from '../data/buy';
+
+const main = buyOptions.filter((o) => o.big);
+const more = buyOptions.filter((o) => !o.big);
 ---
 <Section id="buy" title="Ипотека от 6%<br>или рассрочка без переплаты">
   <div class="buy">
-    {buyOptions.map((o) => (
-      <div class:list={['buy-c', { acc: o.accent }]}>
-        {o.big && <b class="big">{o.big}</b>}
+    {main.map((o) => (
+      <div class="buy-c">
+        <b class="big">{o.big}</b>
         <h3>{o.title}</h3>
         <p>{o.text}</p>
-        {o.accent && <a class="btn" href="#flats">Выбрать квартиру</a>}
       </div>
     ))}
   </div>
+  <ul class="buy-more">
+    {more.map((o) => (
+      <li>
+        <h3>{o.title}</h3>
+        <p>{o.text}</p>
+        {o.cta && <a href="#flats">Выбрать квартиру</a>}
+      </li>
+    ))}
+  </ul>
 </Section>
 <style>
   .buy { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-  .buy-c { background: var(--card); border-radius: var(--r); border: 1px solid var(--line); padding: 24px; display: flex; flex-direction: column; gap: 8px; min-height: 200px; }
-  .buy-c b.big { font-size: 44px; font-weight: 800; letter-spacing: -.05em; line-height: 1; margin-bottom: 8px; }
+  .buy-c { background: var(--card); border-radius: var(--r); border: 1px solid var(--line); padding: 24px; display: flex; flex-direction: column; gap: 8px; }
+  .buy-c b.big { font-size: 44px; font-weight: 800; letter-spacing: -.04em; line-height: 1; margin-bottom: 8px; }
   .buy-c p { color: var(--ink-2); font-size: 15px; }
-  .buy-c.acc { background: var(--copper-strong); color: #fff; border-color: transparent; }
-  .buy-c.acc p { color: #fff; }
-  .buy-c.acc .btn { margin-top: auto; background: #fff; color: var(--ink); align-self: flex-start; }
-  /* на меди обводка фокуса белая, иначе она сливается с фоном */
-  .buy-c.acc :focus-visible { outline-color: #fff; }
-  @media (max-width: 980px) {
-    .buy { grid-template-columns: 1fr 1fr; }
-  }
-  @media (max-width: 640px) {
-    .buy { grid-template-columns: 1fr; }
+  /* второстепенные способы без карточек: тот же ритм колонок, вес текста меньше */
+  .buy-more { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 36px; list-style: none; margin: 40px 0 0; padding: 0 24px; }
+  .buy-more li { display: flex; flex-direction: column; gap: 4px; }
+  .buy-more h3 { font-size: 17px; letter-spacing: -.01em; line-height: 1.3; }
+  .buy-more p { color: var(--ink-2); font-size: 15px; }
+  .buy-more a { margin-top: 4px; align-self: flex-start; color: var(--copper-strong); font-weight: 700; font-size: 15px; text-underline-offset: 3px; }
+  @media (max-width: 720px) {
+    .buy, .buy-more { grid-template-columns: 1fr; }
+    /* цифра слева от названия: три карточки не растягиваются на полтора экрана */
+    .buy-c { display: grid; grid-template-columns: 76px 1fr; column-gap: 12px; row-gap: 4px; align-items: start; padding: 20px; }
+    .buy-c b.big { grid-row: span 2; font-size: 36px; margin: 0; }
+    .buy-more { gap: 20px; margin-top: 28px; padding: 0 4px; }
   }
 </style>

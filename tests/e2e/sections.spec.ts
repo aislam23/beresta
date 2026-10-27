@@ -136,8 +136,9 @@ test('сроки', async ({ page }) => {
 test('как купить', async ({ page }) => {
   const s = page.locator('#buy');
   expect(await textOf(s.locator('h2'))).toBe(copy.buy.h2);
-  await expect(s.locator('.buy-c h3')).toHaveText(['Семейная ипотека', 'IT-ипотека', 'Рассрочка до сдачи дома', 'Рыночная ипотека', 'Trade-in', 'Бронь онлайн']);
-  await expect(s.locator('.buy-c p')).toHaveText([
+  await expect(s.locator('.buy-c h3')).toHaveText(['Семейная ипотека', 'IT-ипотека', 'Рассрочка до сдачи дома']);
+  await expect(s.locator('.buy-more h3')).toHaveText(['Рыночная ипотека', 'Trade-in', 'Бронь онлайн']);
+  await expect(s.locator('.buy-c p, .buy-more p')).toHaveText([
     'Для семей с детьми.',
     'Для сотрудников аккредитованных IT-компаний.',
     'Первый взнос от 30%, остаток выплачиваете до сдачи дома без процентов.',
