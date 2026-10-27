@@ -10,12 +10,12 @@ import tallMp4 from '../assets/video/area-tall.mp4?url';
 /** Вертикальная вырезка ролика нужна, когда экран выше, чем шире: иначе cover оставит от кадра узкую полосу. */
 const tall = '(max-aspect-ratio: 4/5)';
 const [wideAvif, wideWebp, tallAvif, tallWebp] = await Promise.all([
-  getImage({ src: wideJpg, format: 'avif', width: 1600 }),
-  getImage({ src: wideJpg, format: 'webp', width: 1600 }),
+  getImage({ src: wideJpg, format: 'avif', width: 1280 }),
+  getImage({ src: wideJpg, format: 'webp', width: 1280 }),
   getImage({ src: tallJpg, format: 'avif', width: 540 }),
   getImage({ src: tallJpg, format: 'webp', width: 540 }),
 ]);
-const fallback = await getImage({ src: wideJpg, format: 'jpg', width: 1600 });
+const fallback = await getImage({ src: wideJpg, format: 'jpg', width: 1280 });
 ---
 <section id="area" class="area" aria-labelledby="area-title" data-scrub data-tall={tall} data-src-wide={wideMp4} data-src-tall={tallMp4}>
   <div class="stage">
@@ -24,7 +24,7 @@ const fallback = await getImage({ src: wideJpg, format: 'jpg', width: 1600 });
       <source media={tall} srcset={tallWebp.src} type="image/webp" />
       <source srcset={wideAvif.src} type="image/avif" />
       <source srcset={wideWebp.src} type="image/webp" />
-      <img src={fallback.src} width="1600" height="900" alt="Женщина с коляской идёт по тропинке в сосновом бору, за деревьями видны дома комплекса" loading="lazy" decoding="async" />
+      <img src={fallback.src} width="1280" height="720" alt="Женщина с коляской идёт по тропинке в сосновом бору, за деревьями видны дома комплекса" loading="lazy" decoding="async" />
     </picture>
     <video muted playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     <div class="scrim" aria-hidden="true"></div>
@@ -56,8 +56,6 @@ const fallback = await getImage({ src: wideJpg, format: 'jpg', width: 1600 });
   .head .lead { color: rgba(255, 255, 255, .88); }
   @media (max-aspect-ratio: 4/5) {
     .area { height: 240vh; }
-    /* в начале ролика женщина с коляской у левого края вырезки */
-    .poster img, video { object-position: 25% 50%; }
     .scrim { background: linear-gradient(0deg, rgba(20, 24, 22, .72) 0%, rgba(20, 24, 22, .3) 40%, rgba(20, 24, 22, 0) 62%); }
     .wrap { padding-bottom: calc(clamp(32px, 6vh, 56px) + 72px); /* над нижней плашкой телефона */ }
   }
