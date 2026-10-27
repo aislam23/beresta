@@ -7,7 +7,11 @@ import { audiences } from '../data/audiences';
   <div class="who">
     {audiences.map((a) => (
       <article class="who-c">
-        <Photo class="who-photo" shot={a.shot} tone={a.tone} alt={a.alt} placeholder={a.placeholder} sizes="(max-width: 640px) 100vw, (max-width: 980px) 50vw, 300px" scene={false} />
+        <div class="frame">
+          <div class="media">
+            <Photo class="who-photo" shot={a.shot} tone={a.tone} alt={a.alt} placeholder={a.placeholder} sizes="(max-width: 860px) 100vw, 700px" scene={false} />
+          </div>
+        </div>
         <div class="body">
           <h3>{a.title}</h3>
           <p>{a.text}</p>
@@ -18,17 +22,50 @@ import { audiences } from '../data/audiences';
   </div>
 </Section>
 <style>
-  .who { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .who-c { background: var(--card); border-radius: var(--r); border: 1px solid var(--line); overflow: hidden; display: flex; flex-direction: column; }
-  .who-c :global(.who-photo) { border-radius: 0; min-height: 200px; }
-  .who-c .body { padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-  .who-c p { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
-  .fit { margin-top: auto; padding-top: 14px; border-top: 1px dashed var(--line); font-size: 13px; line-height: 1.4; }
-  .fit b { display: block; font-size: 15px; }
-  @media (max-width: 980px) {
-    .who { grid-template-columns: 1fr 1fr; }
+  /* Каждая аудитория отдельной строкой: крупный кадр и текст сбоку, стороны чередуются */
+  .who { display: grid; gap: clamp(72px, 11vw, 168px); }
+  .who-c { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 28px); align-items: end; }
+  .frame { grid-column: 1 / 8; grid-row: 1; position: relative; aspect-ratio: 5 / 4; border-radius: var(--r); overflow: hidden; background: var(--pine-2); view-timeline: --who; }
+  .body { grid-column: 9 / 13; grid-row: 1; }
+  .who-c:nth-child(even) .frame { grid-column: 6 / 13; }
+  .who-c:nth-child(even) .body { grid-column: 1 / 5; }
+
+  /* Кадр выше рамки на 16%: запас под параллакс, края не показываются */
+  .media { position: absolute; inset: -8% 0; }
+  .media :global(.who-photo) { position: absolute; inset: 0; border-radius: 0; min-height: 0; }
+
+  .body h3 { font-size: clamp(28px, 3vw, 40px); line-height: 1.1; letter-spacing: -.03em; }
+  .body p { margin-top: 16px; font-size: 17px; line-height: 1.55; color: var(--ink-2); max-width: 40ch; }
+  .fit { margin-top: 28px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 15px; line-height: 1.4; color: var(--ink-2); }
+  .fit b { display: block; margin-bottom: 2px; font-size: 18px; color: var(--ink); }
+
+  /* Появление как у exovio: рамка раскрывается из уменьшенной, кадр внутри отъезжает с 1.2 до 1.
+     Всё идёт за прокруткой и заканчивается, когда верх рамки поднялся примерно на треть экрана.
+     Параллакс тянется весь проход кадра через экран. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .frame { animation: who-open cubic-bezier(.25, .46, .45, .94) both; }
+      .media { animation: who-zoom cubic-bezier(.25, .46, .45, .94) both, who-drift linear both; }
+      .body { animation: who-rise cubic-bezier(.25, .46, .45, .94) both; }
+      /* Таймлайн отдельным правилом: иначе минификатор вклеит его в сокращение animation, а Chrome такую запись отбросит целиком */
+      .who-c .frame { animation-timeline: --who; animation-range: cover 0% cover 45%; }
+      .who-c .media { animation-timeline: --who, --who; animation-range: cover 0% cover 45%, cover 0% cover 100%; }
+      .who-c .body { animation-timeline: view(); animation-range: entry 0% entry 100%; }
+    }
   }
-  @media (max-width: 640px) {
-    .who { grid-template-columns: 1fr; }
+  @keyframes who-open {
+    from { clip-path: inset(12% 8% round var(--r)); }
+    to { clip-path: inset(0 round var(--r)); }
+  }
+  @keyframes who-zoom { from { scale: 1.2; } to { scale: 1; } }
+  @keyframes who-drift { from { translate: 0 -6%; } to { translate: 0 6%; } }
+  @keyframes who-rise { from { opacity: 0; translate: 0 32px; } to { opacity: 1; translate: 0 0; } }
+
+  @media (max-width: 860px) {
+    .who { gap: clamp(56px, 12vw, 96px); }
+    .who-c, .who-c:nth-child(even) { grid-template-columns: 1fr; }
+    .who-c .frame, .who-c:nth-child(even) .frame, .who-c .body, .who-c:nth-child(even) .body { grid-column: 1; grid-row: auto; }
+    .body { margin-top: 24px; max-width: 560px; }
+    .body p { font-size: 16px; }
   }
 </style>

@@ -102,6 +102,16 @@ test('для кого', async ({ page }) => {
   await expect(s.locator('.fit')).toHaveCount(4);
 });
 
+test('для кого: кадр раскрывается из рамки, пока его прокручивают', async ({ page }) => {
+  const frame = page.locator('#who .frame').nth(1);
+  const clipAt = async (k: number) => {
+    await frame.evaluate((el: HTMLElement, k) => window.scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * k), k);
+    return frame.evaluate((el) => getComputedStyle(el).clipPath);
+  };
+  await expect.poll(() => clipAt(0.9)).toMatch(/^inset\((?!0%? round)/);
+  await expect.poll(() => clipAt(0.2)).toMatch(/^inset\(0%? round/);
+});
+
 test('квартиры', async ({ page }) => {
   const s = page.locator('#flats');
   expect(await textOf(s.locator('h2'))).toBe(copy.flats.h2);
