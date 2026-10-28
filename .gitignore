@@ -8,3 +8,5 @@ dist/
 test-results/
 playwright-report/
 src/assets/photos/takes/
+.impeccable/hook.cache.json
+.impeccable/live/
