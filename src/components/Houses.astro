@@ -1,0 +1,46 @@
+---
+import Section from './Section.astro';
+import { houses } from '../data/houses';
+---
+<Section id="houses" title="Первый дом сдаём<br>в этом квартале" lead="Корпус&nbsp;1 готов на&nbsp;95%. В&nbsp;корпусе&nbsp;3 только начались продажи.">
+  <div class="houses">
+    {houses.map((h) => (
+      <article class:list={['house', { now: h.readiness !== undefined }]}>
+        <div class="n"><b>Корпус&nbsp;{h.n}</b><span>{h.floors}&nbsp;этажей · {h.units}&nbsp;квартир</span></div>
+        <div class="when">{h.due}</div>
+        {h.readiness !== undefined ? (
+          <div class="bar" role="progressbar" aria-label={`Готовность корпуса ${h.n}`} aria-valuemin="0" aria-valuemax="100" aria-valuenow={h.readiness}><i style={`width:${h.readiness}%`}></i></div>
+        ) : (
+          <>
+            <div class="steps">{[0, 1, 2, 3, 4].map((i) => <i class:list={{ on: i < (h.steps ?? 0) }}></i>)}</div>
+            <div class="steps-l">{h.stepLabels?.map((l) => <span>{l}</span>)}</div>
+          </>
+        )}
+        <p class="st">{h.status}</p>
+      </article>
+    ))}
+  </div>
+</Section>
+<style>
+  .houses { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .house { background: var(--card); border-radius: var(--r); border: 1px solid var(--line); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .house .n { display: flex; justify-content: space-between; align-items: baseline; }
+  .house .n b { font-size: 22px; font-weight: 800; letter-spacing: -.03em; }
+  .house .n span { font-size: 14px; color: var(--ink-2); font-weight: 600; }
+  .house .when { font-size: 36px; font-weight: 800; letter-spacing: -.045em; line-height: 1; }
+  .house .st { font-size: 15px; color: var(--ink-2); }
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+  .steps i { height: 8px; border-radius: 4px; background: #E6DFD2; }
+  .steps i.on { background: var(--pine); }
+  .steps-l { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-2); margin-top: -8px; }
+  .house.now { background: var(--pine); color: var(--paper); border-color: transparent; }
+  .house.now .n span, .house.now .st, .house.now .steps-l { color: #C9D4C4; }
+  .bar { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, .18); overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--copper); }
+  @media (max-width: 980px) {
+    .houses { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .houses { grid-template-columns: 1fr; }
+  }
+</style>

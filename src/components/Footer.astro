@@ -1,0 +1,21 @@
+---
+import Logo from './Logo.astro';
+import { complex } from '../data/complex';
+---
+<footer>
+  <div class="wrap">
+    <div><Logo /><p class="tagline">{complex.tagline}</p></div>
+    <div><b>Офис продаж</b><br />{complex.address}</div>
+    <div><b><a class="tel" href={complex.phone.href}>{complex.phone.display}</a></b><br />{complex.developer}</div>
+    <p class="disc">{complex.disclaimer}</p>
+  </div>
+</footer>
+<style>
+  footer { padding: 48px 0 96px; font-size: 14px; color: var(--ink-2); }
+  footer .wrap { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 24px; }
+  footer b { color: var(--ink); }
+  .tagline { margin-top: 12px; }
+  .tel { text-decoration: none; }
+  .disc { grid-column: 1 / -1; border-top: 1px solid var(--line); padding-top: 20px; font-size: 12px; }
+  @media (max-width: 640px) { footer .wrap { grid-template-columns: 1fr; } }
+</style>

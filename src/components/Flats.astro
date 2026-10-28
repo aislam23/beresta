@@ -1,0 +1,41 @@
+---
+import Section from './Section.astro';
+import FlatCard from './FlatCard.astro';
+import { flats, flatsNotes } from '../data/flats';
+---
+<Section id="flats" tone="paper-2" title="Пять планировок,<br>цены от 6,6&nbsp;млн&nbsp;₽" lead="Квартиры сдаются в white box: стены выровнены, сделаны стяжка и разводка. Чистовую отделку можно заказать за доплату. Средняя цена 245&nbsp;000&nbsp;₽ за м².">
+  <div class="flats">
+    {flats.map((f) => <FlatCard flat={f} />)}
+    <article class="flat-help">
+      <h3>Не знаете, что выбрать?</h3>
+      <p>Расскажите, сколько вас и какой бюджет. Менеджер пришлёт <span class="nowrap">3–5&nbsp;квартир</span> с расчётом платежа по ипотеке.</p>
+      <a class="btn btn-c" href="#pick">Получить подборку</a>
+    </article>
+  </div>
+  <div class="flats-note">
+    {flatsNotes.map((n) => <div class:list={['box', { c: n.tone === 'copper' }]}><b>{n.title}</b>{n.text}</div>)}
+  </div>
+</Section>
+<style>
+  .flats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .flat-help { border-radius: var(--r); border: 1px solid transparent; padding: 22px; display: flex; flex-direction: column; gap: 14px; justify-content: center; background: var(--pine); color: var(--paper); }
+  .flat-help h3 { font-size: 26px; }
+  .flat-help p { color: #C9D4C4; }
+  .flat-help .btn { align-self: flex-start; }
+  /* после «–» браузер может перенести строку, держим «3–5 квартир» вместе */
+  .flats-note { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+  .box { background: var(--pine-2); border-radius: 16px; padding: 20px 22px; font-size: 15px; line-height: 1.5; }
+  .box b { display: block; margin-bottom: 4px; }
+  .box.c { background: var(--copper-2); }
+  @media (max-width: 980px) {
+    .flats { grid-template-columns: 1fr 1fr; }
+  }
+  /* на телефоне планировки листаются вбок: столбиком их пять экранов, сравнить цены нельзя */
+  @media (max-width: 640px) {
+    .flats-note { grid-template-columns: 1fr; }
+    .flats { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; margin: 0 calc(-1 * var(--gut)); padding: 0 var(--gut) 4px; scroll-padding-inline: var(--gut); scrollbar-width: none; }
+    .flats::-webkit-scrollbar { display: none; }
+    /* :global — карточки из FlatCard несут свой scope-атрибут, простое «> *» их не задело бы */
+    .flats > :global(*) { flex: 0 0 84%; scroll-snap-align: start; }
+  }
+</style>

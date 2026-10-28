@@ -1,0 +1,18 @@
+---
+import Section from './Section.astro';
+import { faq } from '../data/faq';
+---
+<Section id="faq" tone="paper-2" title="О чём спрашивают<br>перед покупкой">
+  <div class="faq">
+    {faq.map((f, i) => <details open={i === 0}><summary>{f.q}</summary><p>{f.a}</p></details>)}
+  </div>
+</Section>
+<style>
+  .faq { display: grid; gap: 10px; max-width: 900px; }
+  details { background: var(--card); border-radius: 16px; border: 1px solid var(--line); padding: 0 22px; }
+  summary { list-style: none; cursor: pointer; padding: 22px 0; font-weight: 700; font-size: 18px; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; content: "+" / ""; font-size: 26px; font-weight: 500; color: var(--pine); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { padding: 0 0 22px; color: var(--ink-2); max-width: 720px; }
+</style>

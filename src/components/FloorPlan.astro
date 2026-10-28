@@ -1,0 +1,185 @@
+---
+import type { PlanType } from '../data/flats';
+
+interface Props { type: PlanType; dark?: boolean }
+const { type, dark = false } = Astro.props;
+
+type Pt = [number, number];
+type Seg = [number, number, number, number];
+type Rect = [number, number, number, number];
+interface Label { x: number; y: number; text: string; sub?: string; small?: boolean }
+interface Plan {
+  label: string;
+  /** Контур внешней стены, обход по точкам. */
+  outline: Pt[];
+  /** Окна: отрезки на внешней стене, там в стене разрыв. */
+  windows: Seg[];
+  partitions: Seg[];
+  wet: Rect[];
+  /** Ниши, гардеробные, терраса: пунктирные ломаные. */
+  dashed: Pt[][];
+  labels: Label[];
+  /** Французский балкон: разрыв на левой стене, y от и до. */
+  balcony?: [number, number];
+  terrace?: Rect;
+}
+
+const box: Pt[] = [[10, 10], [310, 10], [310, 190], [10, 190]];
+
+const plans: Record<PlanType, Plan> = {
+  studio: {
+    label: 'Схема студии: комната с кухней-нишей, ванная, французский балкон',
+    outline: box,
+    windows: [[10, 110, 10, 170]],
+    partitions: [[220, 10, 220, 190], [220, 90, 310, 90]],
+    wet: [[220, 10, 90, 80]],
+    dashed: [[[70, 10], [70, 80], [10, 80]]],
+    labels: [
+      { x: 125, y: 110, text: 'Комната' },
+      { x: 40, y: 45, text: 'кухня', small: true },
+      { x: 265, y: 50, text: 'Ванная' },
+      { x: 265, y: 140, text: 'Прихожая' },
+    ],
+    balcony: [110, 170],
+  },
+  one: {
+    label: 'Схема однокомнатной: кухня-гостиная 16 м², спальня, ванная',
+    outline: box,
+    windows: [[50, 10, 140, 10], [215, 10, 275, 10]],
+    partitions: [[180, 10, 180, 120], [10, 120, 310, 120], [90, 120, 90, 190]],
+    wet: [[10, 120, 80, 70]],
+    dashed: [],
+    labels: [
+      { x: 95, y: 65, text: 'Кухня-гостиная', sub: '16 м²' },
+      { x: 245, y: 65, text: 'Спальня' },
+      { x: 50, y: 155, text: 'Ванная' },
+      { x: 200, y: 155, text: 'Прихожая' },
+    ],
+  },
+  two: {
+    label: 'Схема двухкомнатной: кухня-гостиная, мастер-спальня с гардеробной, детская, ванная',
+    outline: box,
+    windows: [[45, 10, 125, 10], [175, 10, 235, 10], [10, 125, 10, 175]],
+    partitions: [[160, 10, 160, 110], [10, 110, 310, 110], [130, 110, 130, 190], [200, 110, 200, 190]],
+    wet: [[130, 110, 70, 80]],
+    dashed: [[[250, 10], [250, 60], [310, 60]]],
+    labels: [
+      { x: 85, y: 60, text: 'Кухня-гостиная' },
+      { x: 218, y: 82, text: 'Мастер-спальня' },
+      { x: 280, y: 35, text: 'гардероб', small: true },
+      { x: 70, y: 150, text: 'Детская' },
+      { x: 165, y: 150, text: 'Ванная' },
+      { x: 255, y: 150, text: 'Прихожая' },
+    ],
+  },
+  three: {
+    label: 'Схема трёхкомнатной: кухня-гостиная, три комнаты, две ванные, окна на две стороны',
+    outline: box,
+    windows: [[40, 10, 120, 10], [190, 10, 270, 10], [30, 190, 100, 190], [220, 190, 290, 190]],
+    partitions: [[150, 10, 150, 100], [10, 100, 310, 100], [120, 100, 120, 190], [200, 100, 200, 190], [120, 145, 200, 145]],
+    wet: [[120, 100, 80, 45], [120, 145, 80, 45]],
+    dashed: [],
+    labels: [
+      { x: 80, y: 55, text: 'Кухня-гостиная' },
+      { x: 230, y: 55, text: 'Комната' },
+      { x: 65, y: 145, text: 'Комната' },
+      { x: 255, y: 145, text: 'Комната' },
+      { x: 160, y: 122.5, text: 'Ванная' },
+      { x: 160, y: 167.5, text: 'Ванная' },
+    ],
+  },
+  penthouse: {
+    label: 'Схема пентхауса: гостиная, три спальни, две ванные, терраса 40 м²',
+    outline: [[10, 10], [310, 10], [310, 190], [160, 190], [160, 120], [10, 120]],
+    windows: [[40, 10, 130, 10], [175, 10, 220, 10], [250, 10, 295, 10], [310, 88, 310, 112], [35, 120, 135, 120]],
+    partitions: [[160, 10, 160, 120], [235, 10, 235, 80], [160, 80, 310, 80], [160, 120, 310, 120], [230, 120, 230, 150], [160, 150, 310, 150]],
+    wet: [[160, 120, 70, 30], [230, 120, 80, 30]],
+    dashed: [[[10, 120], [10, 190], [160, 190]]],
+    labels: [
+      { x: 85, y: 65, text: 'Гостиная' },
+      { x: 197.5, y: 45, text: 'Спальня' },
+      { x: 272.5, y: 45, text: 'Спальня' },
+      { x: 235, y: 100, text: 'Спальня' },
+      { x: 195, y: 135, text: 'Ванная' },
+      { x: 270, y: 135, text: 'Ванная' },
+      { x: 235, y: 170, text: 'Прихожая' },
+      { x: 85, y: 155, text: 'терраса 40 м²' },
+    ],
+    terrace: [10, 120, 150, 70],
+  },
+};
+
+const plan = plans[type];
+
+/** Внешняя стена отрезками: из каждого ребра контура вырезаны окна. */
+const wallPath = (() => {
+  const d: string[] = [];
+  plan.outline.forEach((a, i) => {
+    const b = plan.outline[(i + 1) % plan.outline.length];
+    const horiz = a[1] === b[1];
+    const fixed = horiz ? a[1] : a[0];
+    const lo = horiz ? Math.min(a[0], b[0]) : Math.min(a[1], b[1]);
+    const hi = horiz ? Math.max(a[0], b[0]) : Math.max(a[1], b[1]);
+    const gaps = plan.windows
+      .filter(([x1, y1, x2, y2]) => (horiz ? y1 === fixed && y2 === fixed : x1 === fixed && x2 === fixed))
+      .map(([x1, y1, x2, y2]) => (horiz ? [Math.min(x1, x2), Math.max(x1, x2)] : [Math.min(y1, y2), Math.max(y1, y2)]))
+      .filter(([s, e]) => s >= lo && e <= hi)
+      .sort((p, q) => p[0] - q[0]);
+    let cur = lo;
+    for (const [s, e] of [...gaps, [hi, hi]]) {
+      if (s > cur) d.push(horiz ? `M${cur} ${fixed}H${s}` : `M${fixed} ${cur}V${s}`);
+      cur = Math.max(cur, e);
+    }
+  });
+  return d.join('');
+})();
+
+/** Окно: две тонкие линии по граням стены. */
+const windowPath = plan.windows
+  .map(([x1, y1, x2, y2]) => (y1 === y2
+    ? `M${x1} ${y1 - 1.75}H${x2}M${x1} ${y1 + 1.75}H${x2}`
+    : `M${x1 - 1.75} ${y1}V${y2}M${x1 + 1.75} ${y1}V${y2}`))
+  .join('');
+
+const partitionPath = plan.partitions.map(([x1, y1, x2, y2]) => `M${x1} ${y1}L${x2} ${y2}`).join('');
+const dashedPath = plan.dashed.map((pts) => pts.map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${p[1]}`).join('')).join('');
+
+/** Французский балкон: три коротких штриха ограждения снаружи стены. */
+const balconyPath = plan.balcony
+  ? (() => {
+      const [s, e] = plan.balcony;
+      const step = (e - s) / 3;
+      return [0, 1, 2].map((k) => `M4 ${s + step * k + 4}V${s + step * (k + 1) - 4}`).join('');
+    })()
+  : '';
+---
+<svg class:list={['fp', { dark }]} viewBox="0 0 320 200" role="img" aria-label={plan.label}>
+  {plan.terrace && <rect class="terrace" x={plan.terrace[0]} y={plan.terrace[1]} width={plan.terrace[2]} height={plan.terrace[3]} />}
+  {plan.wet.map(([x, y, w, h]) => <rect class="wet" x={x} y={y} width={w} height={h} />)}
+  {dashedPath && <path class="dash" d={dashedPath} />}
+  <path class="part" d={partitionPath} />
+  <path class="wall" d={wallPath} />
+  {windowPath && <path class="win" d={windowPath} />}
+  {balconyPath && <path class="balc" d={balconyPath} />}
+  <g class="lb">
+    {plan.labels.map((l) => l.sub ? (
+      <text x={l.x} y={l.y}><tspan x={l.x} dy="-.55em">{l.text}</tspan><tspan x={l.x} dy="1.25em">{l.sub}</tspan></text>
+    ) : (
+      <text x={l.x} y={l.y} class:list={{ small: l.small }}>{l.text}</text>
+    ))}
+  </g>
+</svg>
+<style>
+  .fp { display: block; width: 100%; height: auto; color: var(--ink); --wet: var(--pine-2); }
+  .fp.dark { color: #E8E3DA; --wet: #3A4A40; }
+  .fp path { fill: none; stroke: currentColor; }
+  .wall { stroke-width: 3; stroke-linecap: square; }
+  .part { stroke-width: 1.5; stroke-linecap: square; }
+  .win { stroke-width: 1; }
+  .dash { stroke-width: 1; stroke-dasharray: 4 3; opacity: .7; }
+  .balc { stroke-width: 1.5; stroke-linecap: round; }
+  .wet { fill: var(--wet); }
+  .terrace { fill: currentColor; fill-opacity: .06; }
+  .lb text { font: 600 11px var(--font); fill: currentColor; opacity: .7; text-anchor: middle; dominant-baseline: central; }
+  .lb text.small { font-size: 11px; font-weight: 600; }
+</style>

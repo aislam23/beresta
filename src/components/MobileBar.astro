@@ -1,0 +1,11 @@
+---
+import { complex } from '../data/complex';
+---
+<div class="mbar"><a class="btn btn-p" href="#pick">Подобрать квартиру</a><a class="btn btn-s" href={complex.phone.href}>Позвонить</a></div>
+<style>
+  .mbar { display: none; }
+  @media (max-width: 640px) {
+    .mbar { display: flex; position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 50; gap: 8px; }
+    .mbar .btn { flex: 1; padding: 16px 10px; white-space: nowrap; box-shadow: 0 10px 30px -10px rgba(0, 0, 0, .4); }
+  }
+</style>

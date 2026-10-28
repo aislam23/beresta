@@ -1,0 +1,41 @@
+---
+import Section from './Section.astro';
+import NumCard from './NumCard.astro';
+import { developerNums, escrow } from '../data/developer';
+---
+<Section id="dev" flushTop title="СК «Высота-16»<br>строит в Казани с 2011&nbsp;года">
+  <div class="dev">
+    <div class="dev-nums">
+      {developerNums.map((n) => <NumCard num={n} class="dev-num" />)}
+    </div>
+    <div class="escrow">
+      <h3>{escrow.title}</h3>
+      <p>{escrow.text}</p>
+      <ol class="flow" role="list">
+        {escrow.flow.map((f) => <li><b>{f.title}</b>{f.text}</li>)}
+      </ol>
+    </div>
+  </div>
+</Section>
+<style>
+  .dev { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dev-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .dev-nums :global(.dev-num) { padding: 24px; }
+  .escrow { background: var(--ink); color: var(--paper); border-radius: var(--r); padding: clamp(24px, 3vw, 40px); display: flex; flex-direction: column; gap: 16px; }
+  .escrow h3 { font-size: 28px; letter-spacing: -.035em; }
+  .escrow p { color: #C4C6C8; }
+  .flow { list-style: none; margin: auto 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: stretch; }
+  .flow li { background: #34373B; border-radius: 12px; padding: 14px; font-size: 13px; line-height: 1.35; }
+  .flow li b { display: block; font-size: 15px; color: #fff; }
+  /* стрелки рисует CSS; пустой alt-текст убирает их из доступного имени */
+  .flow li + li { position: relative; }
+  .flow li + li::before { content: '→'; content: '→' / ''; position: absolute; left: -14px; top: 50%; transform: translate(-50%, -50%); color: var(--copper); font-weight: 800; font-size: 16px; }
+  @media (max-width: 980px) {
+    .dev { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 640px) {
+    .dev-nums { grid-template-columns: 1fr; }
+    .flow { grid-template-columns: 1fr; }
+    .flow li + li::before { left: 50%; top: -14px; transform: translate(-50%, -50%) rotate(90deg); }
+  }
+</style>

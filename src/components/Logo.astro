@@ -1,0 +1,9 @@
+---
+interface Props { href?: string }
+const { href = '#hero' } = Astro.props;
+---
+<a class="logo" href={href} aria-label="«Береста», в начало страницы"><i aria-hidden="true"></i>береста</a>
+<style>
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 21px; letter-spacing: -.03em; text-decoration: none; }
+  .logo i { display: block; width: 20px; height: 4px; border-radius: 2px; background: var(--ink); box-shadow: 6px 7px 0 -1px var(--ink); }
+</style>

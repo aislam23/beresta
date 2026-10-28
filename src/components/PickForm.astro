@@ -1,0 +1,77 @@
+---
+import { budgetOptions, purchaseOptions } from '../data/pickOptions';
+---
+<section id="pick" class="pick" aria-labelledby="pick-title">
+  <div class="wrap">
+    <div class="final">
+      <div>
+        <h2 id="pick-title">Подберём <span class="nowrap">3–5 квартир</span><br>под ваш бюджет</h2>
+        <p class="lead">Оставьте телефон. Менеджер позвонит и пришлёт подборку с расчётом ежемесячного платежа.</p>
+        <ul>
+          <li>Консультация занимает 30&nbsp;минут</li>
+        </ul>
+      </div>
+      <div data-lead-box>
+        <form class="lead-form" data-kind="pick" novalidate>
+          <div class="row2">
+            <div class="field">
+              <label for="pick-name">Имя</label>
+              <input id="pick-name" name="name" aria-required="true" aria-describedby="pick-name-err" placeholder="Как к вам обращаться" autocomplete="given-name">
+              <p class="err" id="pick-name-err" data-error-for="name" hidden></p>
+            </div>
+            <div class="field">
+              <label for="pick-phone">Телефон</label>
+              <input id="pick-phone" name="phone" type="tel" inputmode="tel" aria-required="true" aria-describedby="pick-phone-err" placeholder="+7 900 000-00-00" autocomplete="tel">
+              <p class="err" id="pick-phone-err" data-error-for="phone" hidden></p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="pick-budget">Бюджет</label>
+            <select id="pick-budget" name="budget">
+              {budgetOptions.map((o) => <option>{o}</option>)}
+            </select>
+          </div>
+          <div class="field">
+            <label for="pick-purchase">Как планируете покупать</label>
+            <select id="pick-purchase" name="purchase">
+              {purchaseOptions.map((o) => <option>{o}</option>)}
+            </select>
+          </div>
+          <div class="field">
+            <label class="agree" for="pick-consent"><input type="checkbox" id="pick-consent" name="consent" aria-required="true" aria-describedby="pick-consent-err">Согласен на обработку персональных данных</label>
+            <p class="err" id="pick-consent-err" data-error-for="consent" hidden></p>
+          </div>
+          <button class="btn btn-c" type="submit">Получить подборку</button>
+        </form>
+        <div class="ok" data-lead-success hidden>
+          <h3 tabindex="-1" data-lead-success-title>Заявка принята</h3>
+          <p>Менеджер позвонит по номеру, который вы оставили.</p>
+          <p class="demo">Это учебный сайт, поэтому заявка никуда не отправлена.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  import { initLeadForm } from '../lib/forms';
+  const form = document.querySelector<HTMLFormElement>('form[data-kind="pick"]');
+  if (form) initLeadForm(form);
+</script>
+<style>
+  .pick { padding: clamp(64px, 9vw, 120px) 0; }
+  .final { background: var(--pine); color: var(--paper); border-radius: 28px; padding: clamp(28px, 5vw, 64px); display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 64px); position: relative; overflow: hidden; }
+  .final .lead { color: #C9D4C4; }
+  .final ul { margin: 24px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; color: #DCE3D6; font-size: 15px; }
+  .final li::before { content: ""; display: inline-block; width: 14px; height: 3px; border-radius: 2px; background: var(--copper); margin-right: 10px; vertical-align: middle; }
+  .final .btn-c { padding: 18px 22px; font-size: 16px; }
+  /* медная обводка фокуса из tokens.css не видна на тёмно-зелёном */
+  .final :focus-visible { outline-color: var(--paper); }
+  .ok { background: rgba(255, 255, 255, .08); border-radius: 16px; padding: 24px; }
+  .ok h3 { font-size: 24px; margin-bottom: 8px; }
+  .ok p { color: #C9D4C4; }
+  /* #B5C3B1 из плана на полупрозрачном .ok даёт 4,2:1 при 12px, нужен светлее */
+  .ok .demo { font-size: 12px; color: #C9D4C4; margin-top: 8px; }
+  @media (max-width: 980px) {
+    .final { grid-template-columns: 1fr; }
+  }
+</style>
