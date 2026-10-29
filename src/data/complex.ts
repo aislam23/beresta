@@ -32,5 +32,5 @@ export const heroNums: Num[] = [
   { value: '200', unit: 'м', label: 'до соснового бора', tone: 'plain' },
   { value: '15', unit: 'мин', label: 'до центра на машине', tone: 'pine' },
   { value: '9', unit: 'мин', label: 'пешком до метро', tone: 'plain' },
-  { value: '6,6', unit: 'млн ₽', label: 'цена студии от', tone: 'copper' },
+  { value: '7,6', unit: 'млн ₽', label: 'цена студии от', tone: 'copper' },
 ];

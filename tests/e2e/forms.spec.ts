@@ -50,7 +50,7 @@ test.describe('бронь', () => {
     await btn.click();
     const dlg = page.getByRole('dialog', { name: copy.booking.title });
     await expect(dlg).toBeVisible();
-    await expect(dlg.locator('[data-booking-what]')).toHaveText('Пентхаус · от 33 млн ₽');
+    await expect(dlg.locator('[data-booking-what]')).toHaveText('Пентхаус · от 34 млн ₽');
     await page.keyboard.press('Escape');
     await expect(dlg).toBeHidden();
     await expect(btn).toBeFocused();
@@ -75,7 +75,7 @@ test.describe('бронь', () => {
     await dlg.getByRole('button', { name: 'Закрыть' }).click();
     await page.locator('button[data-flat="two"]').click();
     await expect(dlg.locator('.err:visible')).toHaveCount(0);
-    await expect(dlg.locator('[data-booking-what]')).toHaveText('2-комнатная · от 13,5 млн ₽');
+    await expect(dlg.locator('[data-booking-what]')).toHaveText('2-комнатная · от 14,5 млн ₽');
   });
   test('успех: форма скрыта, заголовок в фокусе; до отправки блока успеха нет', async ({ page }) => {
     await page.locator('button[data-flat="studio"]').click();

@@ -119,7 +119,7 @@ test('квартиры', async ({ page }) => {
   await expect(s.locator('.flat h3, .flat-help h3')).toHaveText(copy.flats.cards);
   await expect(s.locator('.flat svg[role="img"]')).toHaveCount(5);
   await expect(s.locator('button[data-book]')).toHaveCount(5);
-  await expect(s.locator('button[data-book][data-flat="penthouse"]')).toHaveAttribute('data-book', 'Пентхаус · от 33 млн ₽');
+  await expect(s.locator('button[data-book][data-flat="penthouse"]')).toHaveAttribute('data-book', 'Пентхаус · от 34 млн ₽');
   expect(await textOf(s.locator('.flat-help p'))).toBe(copy.flats.helpText);
   const labels = await s.locator('.flat svg[role="img"]').evaluateAll((els) => els.map((e) => (e.getAttribute('aria-label') ?? '').replace(/\u00a0/g, ' ')));
   expect(labels).toEqual([

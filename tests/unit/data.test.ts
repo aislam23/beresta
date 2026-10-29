@@ -17,7 +17,7 @@ describe('данные', () => {
   it('пять типов квартир, подпись брони', () => {
     expect(flats.map((f) => f.id)).toEqual(['studio', 'one', 'two', 'three', 'penthouse']);
     const p = flats.find((f) => f.id === 'penthouse')!;
-    expect(bookingLabel(p)).toBe('Пентхаус · от 33 млн ₽');
+    expect(bookingLabel(p)).toBe('Пентхаус · от 34 млн ₽');
   });
   it('количество карточек совпадает с прототипом', () => {
     expect(heroNums).toHaveLength(4);
